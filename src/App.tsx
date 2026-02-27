@@ -126,31 +126,33 @@ const ThemedApp: React.FC = () => {
   );
 };
 
-const App: React.FC = () => (
-  <>
-    {EnvironmentHelper.Common.GoogleAnalyticsTag && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${EnvironmentHelper.Common.GoogleAnalyticsTag}`} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${EnvironmentHelper.Common.GoogleAnalyticsTag}', {
-              page_path: window.location.pathname,
-            });
-          `
-          }}
-        />
-      </>
-    )}
+const App: React.FC = () => {
+  return (
+    <>
+      {EnvironmentHelper.Common.GoogleAnalyticsTag && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${EnvironmentHelper.Common.GoogleAnalyticsTag}`} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${EnvironmentHelper.Common.GoogleAnalyticsTag}', {
+                page_path: window.location.pathname,
+              });
+            `
+            }}
+          />
+        </>
+      )}
 
-    <ThemeContextProvider>
-      <ThemedApp />
-    </ThemeContextProvider>
-  </>
-);
+      <ThemeContextProvider>
+        <ThemedApp />
+      </ThemeContextProvider>
+    </>
+  );
+};
 
 export default App;
 
