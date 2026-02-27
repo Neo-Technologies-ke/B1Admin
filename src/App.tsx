@@ -151,4 +151,6 @@ const App: React.FC = () => (
     </ThemeContextProvider>
   </>
 );
+
 export default App;
+
