@@ -54,6 +54,10 @@ export const GlobalThemeStyles: React.FC = () => {
     const primaryLightAlt = lightenColor(primary, 10);
     const primaryDark = darkenColor(primary, 10);
     const primaryDarkAlt = darkenColor(primary, 20);
+    const secondaryLight = lightenColor(secondary, 20);
+    const secondaryLightAlt = lightenColor(secondary, 10);
+    const secondaryDark = darkenColor(secondary, 10);
+    const secondaryDarkAlt = darkenColor(secondary, 20);
 
     let css = `
       /* Override SiteHeader variables */
@@ -101,6 +105,27 @@ export const GlobalThemeStyles: React.FC = () => {
       .MuiChip-colorPrimary .MuiChip-label {
         background-color: ${primary} !important;
         color: #ffffff !important;
+      }
+
+      /* Dashboard page banner */
+      #page-header {
+        --c1: ${secondary} !important;
+        --c1l1: ${secondaryLightAlt} !important;
+        --c1l2: ${secondaryLight} !important;
+        --c1d1: ${secondaryDark} !important;
+        --c1d2: ${secondaryDarkAlt} !important;
+        background-color: ${secondary} !important;
+      }
+
+      #page-header-title,
+      #page-header-subtitle,
+      #page-header .MuiTypography-root {
+        color: #ffffff !important;
+      }
+
+      #page-header-icon {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
       }
     `;
 
