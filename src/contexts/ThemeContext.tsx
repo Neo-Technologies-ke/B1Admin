@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { ApiHelper, UserHelper } from "@churchapps/apphelper";
+import UserContext from "../UserContext";
 
 interface ThemeColors {
   primary: string;
@@ -38,10 +39,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [colors, setColors] = useState<ThemeColors>(defaultColors);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const userContext = useContext(UserContext);
 
   const loadTheme = async () => {
     try {
-      const churchId = UserHelper.currentUserChurch?.church?.id;
+      const churchId = userContext?.userChurch?.church?.id || UserHelper.currentUserChurch?.church?.id;
       
       console.log("🎨 ThemeContext: Loading theme for churchId:", churchId);
       console.log("🎨 ThemeContext: UserHelper.currentUserChurch:", UserHelper.currentUserChurch);
@@ -162,6 +164,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     loadTheme();
   }, []);
+
+  useEffect(() => {
+    if (userContext?.userChurch?.church?.id) {
+      loadTheme();
+    }
+  }, [userContext?.userChurch?.church?.id]);
 
   return (
     <ThemeContext.Provider value={{ colors, logoUrl, refreshTheme, isLoading }}>
