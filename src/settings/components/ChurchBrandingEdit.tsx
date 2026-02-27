@@ -4,6 +4,7 @@ import { Palette as PaletteIcon, Refresh as RefreshIcon, CloudUpload as CloudUpl
 import { ApiHelper, ArrayHelper, Locale, ImageEditor } from "@churchapps/apphelper";
 import type { GenericSettingInterface } from "@churchapps/helpers";
 import Resizer from "react-image-file-resizer";
+import { useTheme as useChurchTheme } from "../../contexts/ThemeContext";
 
 interface Props {
   churchId: string;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const ChurchBrandingEdit: React.FC<Props> = ({ churchId, saveTrigger, onError }) => {
+  const { refreshTheme } = useChurchTheme();
   const [settings, setSettings] = useState<GenericSettingInterface[]>([]);
   const [primaryColor, setPrimaryColor] = useState("#0066FF");
   const [secondaryColor, setSecondaryColor] = useState("#1A1F36");
@@ -145,6 +147,11 @@ export const ChurchBrandingEdit: React.FC<Props> = ({ churchId, saveTrigger, onE
       if (brandingSettings.length > 0) {
         // Backend will handle image storage automatically when it detects data:image/ URLs
         await ApiHelper.post("/settings", brandingSettings, "MembershipApi");
+        
+        // Refresh theme to apply changes immediately
+        setTimeout(() => {
+          refreshTheme();
+        }, 500);
       }
       
       if (onError) onError([]);
