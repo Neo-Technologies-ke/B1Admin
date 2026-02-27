@@ -15,13 +15,13 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     if (UserHelper.checkAccess(Permissions.givingApi.donations.viewSummary)) {
-      ApiHelper.get("/eventLog/type/failed/", "GivingApi").then((data) => {
-        if (data?.length > 0 && data.find((error: any) => !error.resolved)) setDonationError(true);
+      ApiHelper.get("/eventLog/type/failed/", "GivingApi").then((data: { resolved?: boolean }[] | null) => {
+        if (data?.length && data.find((error) => !error.resolved)) setDonationError(true);
       });
     }
 
     if (!formPermission && context?.person?.id) {
-      ApiHelper.get("/memberpermissions/member/" + context.person?.id, "MembershipApi").then((data) => setIsFormMember(data?.length > 0));
+      ApiHelper.get("/memberpermissions/member/" + context.person?.id, "MembershipApi").then((data: unknown[] | null) => setIsFormMember(Boolean(data?.length)));
     }
   }, [formPermission, context?.person?.id]);
 
