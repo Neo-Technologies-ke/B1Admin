@@ -52,6 +52,7 @@ export const ChurchBrandingEdit: React.FC<Props> = ({ churchId, saveTrigger, onE
     
     if (existing) {
       existing.value = value;
+      existing.public = 1;
     } else {
       updatedSettings.push({
         keyName,
@@ -144,19 +145,24 @@ export const ChurchBrandingEdit: React.FC<Props> = ({ churchId, saveTrigger, onE
         s.keyName?.startsWith("brand")
       );
       
+      console.log("💾 ChurchBrandingEdit: Saving branding settings:", brandingSettings);
+      
       if (brandingSettings.length > 0) {
         // Backend will handle image storage automatically when it detects data:image/ URLs
-        await ApiHelper.post("/settings", brandingSettings, "MembershipApi");
+        const response = await ApiHelper.post("/settings", brandingSettings, "MembershipApi");
+        console.log("💾 ChurchBrandingEdit: Save response:", response);
         
         // Refresh theme to apply changes immediately
+        console.log("💾 ChurchBrandingEdit: Triggering theme refresh in 500ms");
         setTimeout(() => {
+          console.log("💾 ChurchBrandingEdit: Calling refreshTheme()");
           refreshTheme();
         }, 500);
       }
       
       if (onError) onError([]);
     } catch (error) {
-      console.error("Error saving branding settings:", error);
+      console.error("💾 ChurchBrandingEdit: Error saving branding settings:", error);
       if (onError) onError(["Failed to save branding settings"]);
     }
   };

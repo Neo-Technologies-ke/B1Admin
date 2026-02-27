@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { ApiHelper, UserHelper } from "@churchapps/apphelper";
 
 interface ThemeColors {
@@ -42,46 +43,66 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       const churchId = UserHelper.currentUserChurch?.church?.id;
       
+      console.log("🎨 ThemeContext: Loading theme for churchId:", churchId);
+      console.log("🎨 ThemeContext: UserHelper.currentUserChurch:", UserHelper.currentUserChurch);
+      
       if (!churchId) {
+        console.log("🎨 ThemeContext: No churchId found, skipping theme load");
         setIsLoading(false);
         return;
       }
 
-      // Load public settings for the church
+      // Load public settings for the church with cache-busting
+      const cacheBuster = `?t=${Date.now()}`;
       const settings = await ApiHelper.getAnonymous(
-        `/settings/public/${churchId}`,
+        `/settings/public/${churchId}${cacheBuster}`,
         "MembershipApi"
       );
+
+      console.log("🎨 ThemeContext: Loaded settings:", settings);
+      console.log("🎨 ThemeContext: Settings keys:", settings ? Object.keys(settings) : "null");
 
       if (settings) {
         const newColors = { ...defaultColors };
         
         if (settings.brandPrimaryColor) {
+          console.log("🎨 ThemeContext: Found brandPrimaryColor:", settings.brandPrimaryColor);
           newColors.primary = settings.brandPrimaryColor;
         }
         if (settings.brandSecondaryColor) {
+          console.log("🎨 ThemeContext: Found brandSecondaryColor:", settings.brandSecondaryColor);
           newColors.secondary = settings.brandSecondaryColor;
         }
         if (settings.brandAccentColor) {
+          console.log("🎨 ThemeContext: Found brandAccentColor:", settings.brandAccentColor);
           newColors.accent = settings.brandAccentColor;
         }
         
+        console.log("🎨 ThemeContext: Applying colors:", newColors);
         setColors(newColors);
         
         // Load logo - check both brandLogoUrl (new) and logoLight (existing)
         if (settings.brandLogoUrl) {
+          console.log("🎨 ThemeContext: Setting logo from brandLogoUrl:", settings.brandLogoUrl);
           setLogoUrl(settings.brandLogoUrl);
         } else if (settings.logoLight) {
+          console.log("🎨 ThemeContext: Setting logo from logoLight:", settings.logoLight);
           setLogoUrl(settings.logoLight);
+        } else {
+          console.log("🎨 ThemeContext: No logo found in settings");
         }
         
         // Apply CSS custom properties
         applyThemeColors(newColors);
+        console.log("🎨 ThemeContext: Theme applied successfully");
+        console.log("🎨 ThemeContext: CSS variables set on :root");
+      } else {
+        console.log("🎨 ThemeContext: No settings returned from API");
       }
       
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading theme:", error);
+      console.error("🎨 ThemeContext: Error loading theme:", error);
       setIsLoading(false);
     }
   };
