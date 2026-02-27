@@ -5,12 +5,10 @@ import { SecondaryMenuHelper } from "../helpers/SecondaryMenuHelper";
 import { SiteHeader } from "@churchapps/apphelper";
 import UserContext from "../UserContext";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../contexts/ThemeContext";
 
 export const Header: React.FC = () => {
   const context = React.useContext(UserContext);
   const navigate = useNavigate();
-  const { logoUrl, colors } = useTheme();
   const formPermission = UserHelper.checkAccess(Permissions.membershipApi.forms.admin) || UserHelper.checkAccess(Permissions.membershipApi.forms.edit);
   const [donationError, setDonationError] = React.useState<boolean>(false);
   const [isFormMember, setIsFormMember] = React.useState<boolean>(false);
