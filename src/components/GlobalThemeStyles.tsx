@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 
 export const GlobalThemeStyles: React.FC = () => {
