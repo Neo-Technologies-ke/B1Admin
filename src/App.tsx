@@ -25,11 +25,8 @@ declare module "@mui/material/styles" {
   }
 }
 
-const createMdTheme = (mode: PaletteMode) => {
-  // Get church primary color from CSS variable or use default
-  const churchPrimary = getComputedStyle(document.documentElement).getPropertyValue('--church-primary').trim() || '#0066FF';
-  
-  return createTheme({
+const createMdTheme = (mode: PaletteMode) =>
+  createTheme({
     palette: {
       mode,
       InputBox: { headerText: mode === "light" ? "#333333" : "#e0e0e0" },
@@ -41,17 +38,9 @@ const createMdTheme = (mode: PaletteMode) => {
     components: {
       MuiCssBaseline: {
         styleOverrides: {
-          // Apply church branding to banner
-          "#banner, header#banner, .MuiAppBar-root#banner": {
-            backgroundColor: `${churchPrimary} !important`,
-            backgroundImage: "none !important"
-          },
-          // Dark mode styles for the banner/subnav area from apphelper
-          ...(mode === "dark" ? {
-            "#banner": {
-              borderBottom: "1px solid #333"
-            }
-          } : {})
+          "#banner": mode === "dark" ? {
+            borderBottom: "1px solid #333"
+          } : {}
         }
       },
       MuiTextField: {
@@ -155,4 +144,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
