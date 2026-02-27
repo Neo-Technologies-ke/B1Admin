@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ControlPanel } from "./ControlPanel";
 import { UserProvider } from "./UserContext";
 import { ThemeContextProvider, useThemeMode } from "./ThemeContext";
+import { ThemeProvider as ChurchThemeProvider } from "./contexts/ThemeContext";
 import { CookiesProvider } from "react-cookie";
 import { createTheme, CssBaseline, ThemeProvider, type PaletteMode } from "@mui/material";
 import "@churchapps/apphelper-markdown/dist/components/markdownEditor/editor.css";
@@ -101,11 +102,13 @@ const ThemedApp: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <CookiesProvider defaultSetOptions={{ path: "/" }}>
           <UserProvider>
-            <Router>
-              <Routes>
-                <Route path="/*" element={<ControlPanel />} />
-              </Routes>
-            </Router>
+            <ChurchThemeProvider>
+              <Router>
+                <Routes>
+                  <Route path="/*" element={<ControlPanel />} />
+                </Routes>
+              </Router>
+            </ChurchThemeProvider>
           </UserProvider>
         </CookiesProvider>
       </QueryClientProvider>

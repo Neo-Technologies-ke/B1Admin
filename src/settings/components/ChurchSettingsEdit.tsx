@@ -16,6 +16,7 @@ import { SupportContactSettingsEdit } from "./SupportContactSettingsEdit";
 import { VisbilityPrefSettingsEdit } from "./VisibilityPrefSettingsEdit";
 import { GuestRegistrationSettingsEdit } from "./GuestRegistrationSettingsEdit";
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
+import { ChurchBrandingEdit } from "./ChurchBrandingEdit";
 
 interface Props {
   church: ChurchInterface;
@@ -229,6 +230,25 @@ export const ChurchSettingsEdit: React.FC<Props> = (props) => {
           <DirectoryApproveSettingsEdit churchId={church?.id || ""} saveTrigger={saveTrigger} />
           <VisbilityPrefSettingsEdit churchId={church?.id || ""} saveTrigger={saveTrigger} />
           <GuestRegistrationSettingsEdit churchId={church?.id || ""} saveTrigger={saveTrigger} />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Branding & Theme Accordion */}
+      <Accordion
+        expanded={expanded === "branding"}
+        onChange={handleAccordionChange("branding")}
+        sx={accordionStyles}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={accordionSummaryStyles}>
+          <SettingsSectionHeader
+            icon={<BusinessIcon />}
+            color="primary"
+            title="Branding & Theme"
+            subtitle="Customize your church's colors and logo"
+          />
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 2 }}>
+          <ChurchBrandingEdit churchId={church?.id || ""} saveTrigger={saveTrigger} />
         </AccordionDetails>
       </Accordion>
 
