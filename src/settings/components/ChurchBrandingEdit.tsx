@@ -143,20 +143,8 @@ export const ChurchBrandingEdit: React.FC<Props> = ({ churchId, saveTrigger, onE
       );
       
       if (brandingSettings.length > 0) {
-        const settingsToSave = await Promise.all(
-          brandingSettings.map(async (setting) => {
-            if (setting.keyName === "brandLogoUrl" && setting.value.startsWith("data:image/")) {
-              const base64 = setting.value.split(",")[1];
-              const key = `/${churchId}/settings/brandLogo.png`;
-              const { FileStorageHelper, Environment } = await import("@churchapps/apphelper");
-              await FileStorageHelper.store(key, "image/png", Buffer.from(base64, "base64"));
-              const photoUpdated = new Date();
-              setting.value = Environment.contentRoot + key + "?dt=" + photoUpdated.getTime().toString();
-            }
-            return setting;
-          })
-        );
-        await ApiHelper.post("/settings", settingsToSave, "MembershipApi");
+        // Backend will handle image storage automatically when it detects data:image/ URLs
+        await ApiHelper.post("/settings", brandingSettings, "MembershipApi");
       }
       
       if (onError) onError([]);
