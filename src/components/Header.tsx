@@ -164,9 +164,12 @@ export const Header: React.FC = () => {
     style.id = 'church-theme-style';
     
     let css = `
-      /* Apply custom primary color to header */
-      #banner {
+      /* Apply custom primary color to header with high specificity */
+      body #banner,
+      body header#banner,
+      body .MuiAppBar-root#banner {
         background-color: var(--church-primary, #0066FF) !important;
+        background-image: none !important;
       }
       
       /* Apply to navigation items */
@@ -176,6 +179,12 @@ export const Header: React.FC = () => {
       
       #banner .MuiTab-root.Mui-selected {
         color: white !important;
+        border-bottom-color: white !important;
+      }
+      
+      /* Ensure buttons and icons are visible */
+      #banner .MuiIconButton-root {
+        color: rgba(255, 255, 255, 0.9) !important;
       }
     `;
     
