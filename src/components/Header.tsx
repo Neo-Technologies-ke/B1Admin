@@ -155,60 +155,6 @@ export const Header: React.FC = () => {
   }, [primaryMenu, secondaryMenu]);
 
   /*<Typography variant="h6" noWrap>{UserHelper.currentUserChurch?.church?.name || ""}</Typography>*/
-  
-  // Inject church logo and theme colors into header via CSS
-  useEffect(() => {
-    const style = document.getElementById('church-theme-style') || document.createElement('style');
-    style.id = 'church-theme-style';
-    
-    let css = `
-      /* Apply custom primary color to header with high specificity */
-      body #banner,
-      body header#banner,
-      body .MuiAppBar-root#banner {
-        background-color: var(--church-primary, #0066FF) !important;
-        background-image: none !important;
-      }
-      
-      /* Apply to navigation items */
-      #banner .MuiTab-root {
-        color: rgba(255, 255, 255, 0.9) !important;
-      }
-      
-      #banner .MuiTab-root.Mui-selected {
-        color: white !important;
-        border-bottom-color: white !important;
-      }
-      
-      /* Ensure buttons and icons are visible */
-      #banner .MuiIconButton-root {
-        color: rgba(255, 255, 255, 0.9) !important;
-      }
-    `;
-    
-    if (logoUrl) {
-      css += `
-        #banner::before {
-          content: '';
-          display: inline-block;
-          width: 32px;
-          height: 32px;
-          background-image: url('${logoUrl}');
-          background-size: contain;
-          background-repeat: no-repeat;
-          background-position: center;
-          margin-right: 12px;
-          vertical-align: middle;
-        }
-      `;
-    }
-    
-    style.textContent = css;
-    
-    if (!document.getElementById('church-theme-style')) {
-      document.head.appendChild(style);
-    }
-  }, [logoUrl, colors]);
 
   return (
     <SiteHeader
