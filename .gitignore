@@ -119,3 +119,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+# VPS Deployment - Sensitive Files (DO NOT COMMIT)
+*_DEPLOYMENT*.md
+DEPLOYMENT_*.md
+VPS_*.md
+DOCKER-*.md
+CHURCH-BRANDING-*.md
+docker-compose.*.yml
+*.sh
+init-databases.sql
