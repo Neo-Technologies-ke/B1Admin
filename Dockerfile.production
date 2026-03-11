@@ -74,10 +74,10 @@ RUN find dist/assets -type f -name "*.js" -exec sed -i \
   -e 's/label:"Lessons\.church"/label:"Lessons"/g' \
   -e 's/appName==="B1\.church"/appName==="Portal"/g' \
   -e 's/appName==="Lessons\.church"/appName==="Lessons"/g' \
-  -e 's#https://[^"]*\.b1\.church#https://portal.lifereformationcentre.org#g' \
-  -e 's#https://lessons\.church#https://lessons.lifereformationcentre.org#g' \
-  -e 's#http://[^"]*\.b1\.church#https://portal.lifereformationcentre.org#g' \
-  -e 's#http://lessons\.church#https://lessons.lifereformationcentre.org#g' {} +
+  -e 's#https://[^"]*\.b1\.church#https://transfer.b1.church#g' \
+  -e 's#https://lessons\.church#https://lessons.church#g' \
+  -e 's#http://[^"]*\.b1\.church#https://transfer.b1.church#g' \
+  -e 's#http://lessons\.church#https://lessons.church#g' {} +
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
