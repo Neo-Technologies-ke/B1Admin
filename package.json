@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@churchapps/apphelper": "git+https://github.com/Neo-Technologies-ke/Packages.git#vps_setup:apphelper",
+    "@churchapps/apphelper": "0.6.15",
     "@churchapps/apphelper-donations": "0.6.17",
     "@churchapps/apphelper-forms": "0.6.14",
     "@churchapps/apphelper-login": "0.6.15",
@@ -93,7 +93,7 @@
     "exec-deploy-prod": "aws s3 sync dist/ s3://chums-app",
     "postdeploy-prod": "aws cloudfront create-invalidation --distribution-id E2OZ4STEUZXHZZ --paths \"/*\"",
     "deploy-prod": "npm run predeploy-prod && npm run exec-deploy-prod && npm run postdeploy-prod",
-    "postinstall": "copyfiles -a -f node_modules/@churchapps/apphelper/public/locales/** public/apphelper/locales && copyfiles -a -f node_modules/@churchapps/apphelper/public/css/** public/apphelper/css"
+    "postinstall": "copyfiles -a -f node_modules/@churchapps/apphelper/public/locales/** public/apphelper/locales && copyfiles -a -f node_modules/@churchapps/apphelper/public/css/** public/apphelper/css && node scripts/patch-apphelper.cjs"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js}": [
