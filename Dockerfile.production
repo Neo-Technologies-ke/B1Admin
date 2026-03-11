@@ -9,11 +9,27 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and scripts for postinstall
 COPY package.json package-lock.json ./
+COPY scripts ./scripts
 
 # Install dependencies
 RUN npm ci --silent --legacy-peer-deps
+
+# Force local API domains in bundled dependency defaults
+RUN find node_modules/@churchapps -type f -name "*.js" -exec sed -i \
+  -e 's#https://api\.churchapps\.org#/api#g' \
+  -e 's#https://api\.staging\.churchapps\.org#/api#g' \
+  -e 's#https://api\.demo\.churchapps\.org#/api#g' \
+  -e 's#https://askapi\.churchapps\.org#/api/ask#g' \
+  -e 's#https://askapi\.staging\.churchapps\.org#/api/ask#g' \
+  -e 's#https://askapi\.demo\.churchapps\.org#/api/ask#g' \
+  -e 's#https://content\.churchapps\.org#/api/content#g' \
+  -e 's#https://content\.staging\.churchapps\.org#/api/content#g' \
+  -e 's#https://democontent\.churchapps\.org#/api/content#g' \
+  -e 's#wss://socket\.churchapps\.org#wss://admin.lifereformationcentre.org/ws#g' \
+  -e 's#wss://socket\.staging\.churchapps\.org#wss://admin.lifereformationcentre.org/ws#g' \
+  -e 's#wss://socket\.demo\.churchapps\.org#wss://admin.lifereformationcentre.org/ws#g' {} +
 
 # Copy source code
 COPY . .
