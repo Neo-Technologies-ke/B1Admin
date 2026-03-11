@@ -68,6 +68,13 @@ RUN npm run postinstall
 # Build the application
 RUN npm run build
 
+# Patch compiled JavaScript to replace B1.Church and Lessons.church labels
+RUN find dist/assets -type f -name "*.js" -exec sed -i \
+  -e 's/label:"B1\.Church"/label:"Portal"/g' \
+  -e 's/label:"Lessons\.church"/label:"Lessons"/g' \
+  -e 's/appName==="B1\.church"/appName==="Portal"/g' \
+  -e 's/appName==="Lessons\.church"/appName==="Lessons"/g' {} +
+
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
