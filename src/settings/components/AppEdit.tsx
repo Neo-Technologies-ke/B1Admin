@@ -110,18 +110,16 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
   };
 
   const onSelect = useCallback((iconName: string) => {
-    const t = { ...currentTab };
-    t.icon = iconName;
-    setCurrentTab(t);
+    setCurrentTab(prev => ({ ...prev, icon: iconName }));
     setIsModalOpen(false);
-  }, [currentTab]);
+  }, []);
 
   const handleDelete = () => {
     if (window.confirm(Locale.label("settings.app.confirmDeleteTab"))) {
       ApiHelper.delete("/links/" + currentTab.id, "ContentApi").then(() => {
         setCurrentTab(null);
         updatedFunction();
-      });
+      }).catch((error) => console.error("Error deleting tab:", error));
     }
   };
 
@@ -132,29 +130,36 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
     setShowPhotoGallery(false);
   };
 
-  const loadPages = () => {
+  const loadPages = useCallback(() => {
     ApiHelper.get("/pages", "ContentApi").then((_pages: PageInterface[]) => {
-      const filteredPages: PageInterface[] = [];
-      _pages.forEach(p => { if (p.url.startsWith("/member")) filteredPages.push(p); });
-      setPages(filteredPages || []);
+      setPages(_pages || []);
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    if (currentTab?.linkType === "page" && pages === null) {
+      loadPages();
+    }
+  }, [currentTab?.linkType, pages, loadPages]);
+
+  useEffect(() => {
+    if (currentTab?.linkType === "page" && pages && pages.length > 0 && currentTab.linkData === "") {
+      setCurrentTab(prev => ({ ...prev, linkData: pages[0]?.id || "" }));
+    }
+  }, [currentTab?.linkType, currentTab?.linkData, pages]);
 
   const getPage = () => {
     if (currentTab?.linkType === "page") {
-      let options: React.ReactElement[] = [];
-      if (pages === null) loadPages();
-      else {
-        options = [];
+      const options: React.ReactElement[] = [];
+      if (pages) {
         pages.forEach(page => {
           options.push(<MenuItem value={page.id} key={page.id}>{page.title}</MenuItem>);
         });
-        if (currentTab.linkData === "") currentTab.linkData = pages[0]?.url;
       }
       return (
         <FormControl fullWidth>
           <InputLabel id="page">{Locale.label("settings.appEdit.page")}</InputLabel>
-          <Select labelId="page" label={Locale.label("settings.appEdit.page")} name="page" value={currentTab?.linkData} onChange={handleChange} data-testid="page-select">
+          <Select labelId="page" label={Locale.label("settings.appEdit.page")} name="page" value={currentTab?.linkData || ""} onChange={handleChange} data-testid="page-select">
             {options}
           </Select>
         </FormControl>
@@ -264,6 +269,7 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
                   <MenuItem value="directory">{Locale.label("settings.appEdit.memberDirectory")}</MenuItem>
                   <MenuItem value="groups">{Locale.label("settings.appEdit.myGroups")}</MenuItem>
                   <MenuItem value="lessons">{Locale.label("settings.appEdit.lessons")}</MenuItem>
+                  <MenuItem value="volunteer">Volunteer Opportunities</MenuItem>
                   <MenuItem value="url">{Locale.label("settings.appEdit.externalUrl")}</MenuItem>
                   <MenuItem value="page">{Locale.label("settings.appEdit.internalPage")}</MenuItem>
                 </Select>

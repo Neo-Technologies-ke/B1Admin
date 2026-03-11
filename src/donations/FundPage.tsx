@@ -28,9 +28,10 @@ export const FundPage = () => {
     totalAmount: 0,
     uniqueDonors: 0
   });
+  const [currency, setCurrency] = React.useState<string>("usd");
 
   const loadData = () => {
-    ApiHelper.get("/funds/" + params.id, "GivingApi").then((data) => {
+    ApiHelper.get("/funds/" + params.id, "GivingApi").then((data: any) => {
       setFund(data);
     });
     loadDonations();
@@ -154,9 +155,9 @@ export const FundPage = () => {
           {personCol}
           <TableCell>
             <Stack direction="row" spacing={1} alignItems="center">
-              <MoneyIcon sx={{ color: "success.main", fontSize: 18 }} />
+              {/* <MoneyIcon sx={{ color: "success.main", fontSize: 18 }} /> */}
               <Typography variant="body2" sx={{ fontWeight: 600, color: "success.main" }}>
-                {CurrencyHelper.formatCurrency(fd.amount)}
+                {CurrencyHelper.formatCurrencyWithLocale(fd.amount, currency)}
               </Typography>
             </Stack>
           </TableCell>
@@ -202,6 +203,12 @@ export const FundPage = () => {
 
   React.useEffect(loadData, [params.id]);
 
+  React.useEffect(() => {
+    CurrencyHelper.loadCurrency().then((result) => {
+      setCurrency(result);
+    });
+  }, []);
+
   const getTable = () => {
     if (!fundDonations) return <Loading />;
     return (
@@ -226,7 +233,6 @@ export const FundPage = () => {
   return (
     <>
       <PageHeader
-        icon={<FundIcon />}
         title={`${fund.name} ${Locale.label("donations.fundsPage.don")}`}
         subtitle={Locale.label("donations.fundPage.subtitle")}
       >
@@ -260,8 +266,8 @@ export const FundPage = () => {
             </Stack>
             <Stack spacing={0.5} alignItems="center" sx={{ minWidth: 100 }}>
               <Stack direction="row" spacing={1} alignItems="center">
-                <MoneyIcon sx={{ color: "#FFF", fontSize: 24 }} />
-                <Typography variant="h5" sx={{ color: "#FFF", fontWeight: 700 }}>{stats.totalAmount.toLocaleString("en-US", { style: "decimal", minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Typography>
+              {/* <MoneyIcon sx={{ color: "#FFF", fontSize: 24 }} /> */}
+              <Typography variant="h5" sx={{ color: "#FFF", fontWeight: 700 }}>{CurrencyHelper.formatCurrencyWithLocale(stats.totalAmount, currency, 0)}</Typography>
               </Stack>
               <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: 0.5 }}>Total Amount</Typography>
             </Stack>

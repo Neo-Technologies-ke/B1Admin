@@ -6,11 +6,8 @@ import { type GroupInterface } from "@churchapps/helpers";
 import { Assignment } from "../components/Assignment";
 import { PlanNavigation } from "../components/PlanNavigation";
 import { Box, Container, Typography } from "@mui/material";
-import { Assignment as AssignmentIcon } from "@mui/icons-material";
 import { ServiceOrder } from "../components/ServiceOrder";
 import { Breadcrumbs } from "../../components/ui";
-
-
 
 export const PlanPage = () => {
   const params = useParams();
@@ -66,25 +63,21 @@ export const PlanPage = () => {
 
   return (
     <>
-      <Box sx={{
-        backgroundColor: "var(--c1l2)",
-        color: "#FFF",
-        position: "relative",
-        left: "50%",
-        right: "50%",
-        marginLeft: "-50vw",
-        marginRight: "-50vw",
-        width: "100vw",
-        "--c1l2": "#568BDA",
-        paddingX: { xs: 2, sm: 3, md: 4 },
-        paddingTop: 1.5,
-        paddingBottom: 0.5,
-        zIndex: 1
-      }}>
-        <Breadcrumbs items={breadcrumbItems} showHome={true} />
-      </Box>
-      <Box sx={{ marginTop: "-1.5rem" }}>
-        <PageHeader icon={<AssignmentIcon />} title={plan.name || Locale.label("plans.planPage.servicePlan")} subtitle={Locale.label("plans.planPage.subtitle")} />
+      <Box sx={{ position: "relative", "& #page-header > div": { paddingTop: "5.5rem !important" } }}>
+        <PageHeader title={plan.name || Locale.label("plans.planPage.servicePlan")} subtitle={Locale.label("plans.planPage.subtitle")} />
+        <Box sx={{
+          position: "absolute",
+          top: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100vw",
+          zIndex: 2,
+          paddingTop: 1.5,
+        }}>
+          <Container maxWidth="xl">
+            <Breadcrumbs items={breadcrumbItems} showHome={true} />
+          </Container>
+        </Box>
       </Box>
       <PlanNavigation selectedTab={selectedTab} onTabChange={setSelectedTab} plan={plan} />
 

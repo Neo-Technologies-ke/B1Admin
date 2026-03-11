@@ -1,12 +1,13 @@
 import React, { useCallback, memo } from "react";
-import { Box, Card, CardContent, Typography, Stack, Paper, Chip, Avatar, Button } from "@mui/material";
-import { Add as AddIcon, Assignment as AssignmentIcon, CalendarMonth as CalendarIcon, Edit as EditIcon, EventNote as EventNoteIcon, MenuBook as MenuBookIcon } from "@mui/icons-material";
+import { Box, Card, CardContent, Typography, Stack, Paper, Chip, Avatar, Button, Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Add as AddIcon, ArrowDropDown as ArrowDropDownIcon, Assignment as AssignmentIcon, CalendarMonth as CalendarIcon, Edit as EditIcon, EventNote as EventNoteIcon, MenuBook as MenuBookIcon, DateRange as DateRangeIcon } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { type GroupInterface } from "@churchapps/helpers";
 import { type PlanInterface } from "../../helpers";
 import { ArrayHelper, DateHelper, Locale, Loading, UserHelper, Permissions } from "@churchapps/apphelper";
 import { PlanEdit } from "./PlanEdit";
 import { LessonScheduleEdit } from "./LessonScheduleEdit";
+import { BulkLessonSchedule } from "./BulkLessonSchedule";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../queryClient";
 
@@ -20,6 +21,8 @@ interface Props {
 export const PlanList = memo((props: Props) => {
   const [plan, setPlan] = React.useState<PlanInterface>(null);
   const [showLessonSchedule, setShowLessonSchedule] = React.useState(false);
+  const [showBulkSchedule, setShowBulkSchedule] = React.useState(false);
+  const [lessonMenuAnchor, setLessonMenuAnchor] = React.useState<null | HTMLElement>(null);
   const canEdit = UserHelper.checkAccess(Permissions.membershipApi.plans.edit);
 
   const plansQuery = useQuery<PlanInterface[]>({
@@ -54,6 +57,7 @@ export const PlanList = memo((props: Props) => {
   const handleUpdated = useCallback(() => {
     setPlan(null);
     setShowLessonSchedule(false);
+    setShowBulkSchedule(false);
     plansQuery.refetch();
     // Invalidate both the specific plan type query and the general plans query
     if (props.planTypeId) {
@@ -65,6 +69,19 @@ export const PlanList = memo((props: Props) => {
   const handleScheduleLesson = useCallback(() => {
     setShowLessonSchedule(true);
   }, []);
+
+
+  if (showBulkSchedule && canEdit) {
+    return (
+      <BulkLessonSchedule
+        ministryId={props.ministry.id}
+        planTypeId={props.planTypeId}
+        plans={plans}
+        onSave={handleUpdated}
+        onCancel={() => setShowBulkSchedule(false)}
+      />
+    );
+  }
 
   if (showLessonSchedule && canEdit) {
     return (
@@ -125,7 +142,8 @@ export const PlanList = memo((props: Props) => {
                 variant="contained"
                 size="large"
                 startIcon={<MenuBookIcon />}
-                onClick={handleScheduleLesson}
+                endIcon={<ArrowDropDownIcon />}
+                onClick={(e) => setLessonMenuAnchor(e.currentTarget)}
                 sx={{
                   fontSize: "1rem",
                   py: 1.5,
@@ -136,6 +154,21 @@ export const PlanList = memo((props: Props) => {
             </Stack>
           )}
         </Paper>
+
+        <Menu
+          anchorEl={lessonMenuAnchor}
+          open={Boolean(lessonMenuAnchor)}
+          onClose={() => setLessonMenuAnchor(null)}
+        >
+          <MenuItem onClick={() => { setLessonMenuAnchor(null); handleScheduleLesson(); }}>
+            <ListItemIcon><MenuBookIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>{Locale.label("plans.planList.scheduleLesson") || "Schedule Lesson"}</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={() => { setLessonMenuAnchor(null); setShowBulkSchedule(true); }}>
+            <ListItemIcon><DateRangeIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>{Locale.label("plans.planList.bulkSchedule") || "Bulk Schedule"}</ListItemText>
+          </MenuItem>
+        </Menu>
       </Box>
     );
   }
@@ -143,7 +176,7 @@ export const PlanList = memo((props: Props) => {
   return (
     <Box sx={{ position: "relative" }}>
       <Box sx={{ mb: 3 }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" useFlexGap spacing={1} sx={{ mb: 2 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
             <AssignmentIcon sx={{ color: "primary.main" }} />
             <Typography variant="h5" sx={{ fontWeight: 600, color: "text.primary" }}>
@@ -164,7 +197,8 @@ export const PlanList = memo((props: Props) => {
                 variant="contained"
                 size="medium"
                 startIcon={<MenuBookIcon />}
-                onClick={handleScheduleLesson}>
+                endIcon={<ArrowDropDownIcon />}
+                onClick={(e) => setLessonMenuAnchor(e.currentTarget)}>
                 {Locale.label("plans.planList.scheduleLesson") || "Schedule Lesson"}
               </Button>
             </Stack>
@@ -188,13 +222,14 @@ export const PlanList = memo((props: Props) => {
               }
             }}>
             <CardContent sx={{ pb: "16px !important" }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Stack direction="row" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" useFlexGap spacing={1}>
                 <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                   <Avatar
                     sx={{
                       bgcolor: "primary.main",
                       width: 48,
-                      height: 48
+                      height: 48,
+                      flexShrink: 0
                     }}>
                     <CalendarIcon />
                   </Avatar>
@@ -218,7 +253,7 @@ export const PlanList = memo((props: Props) => {
                       {p.name}
                     </Typography>
 
-                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
                       {p.serviceDate && (
                         <Chip
                           icon={<CalendarIcon />}
@@ -249,7 +284,7 @@ export const PlanList = memo((props: Props) => {
                 </Stack>
 
                 {canEdit && (
-                  <Box sx={{ ml: 2 }}>
+                  <Box sx={{ flexShrink: 0 }}>
                     <Button
                       size="small"
                       startIcon={<EditIcon />}
@@ -258,6 +293,7 @@ export const PlanList = memo((props: Props) => {
                       sx={{
                         color: "primary.main",
                         borderColor: "primary.main",
+                        whiteSpace: "nowrap",
                         "&:hover": {
                           backgroundColor: "primary.light",
                           borderColor: "primary.dark"
@@ -272,6 +308,21 @@ export const PlanList = memo((props: Props) => {
           </Card>
         ))}
       </Stack>
+
+      <Menu
+        anchorEl={lessonMenuAnchor}
+        open={Boolean(lessonMenuAnchor)}
+        onClose={() => setLessonMenuAnchor(null)}
+      >
+        <MenuItem onClick={() => { setLessonMenuAnchor(null); handleScheduleLesson(); }}>
+          <ListItemIcon><MenuBookIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>{Locale.label("plans.planList.scheduleLesson") || "Schedule Lesson"}</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => { setLessonMenuAnchor(null); setShowBulkSchedule(true); }}>
+          <ListItemIcon><DateRangeIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>{Locale.label("plans.planList.bulkSchedule") || "Bulk Schedule"}</ListItemText>
+        </MenuItem>
+      </Menu>
     </Box>
   );
 });

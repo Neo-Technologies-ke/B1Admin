@@ -205,12 +205,25 @@
     "tryAgain": "Prøv igjen",
     "update": "Oppdater",
     "website": "Nettsted",
+    "mobile": "Mobil",
+    "navigation": "Navigasjon",
+    "appTheme": "App-tema",
+    "b1Mobile": "B1 Mobile",
+    "b1CheckIn": "B1 CheckIn",
     "yes": "Ja"
   },
   "components": {
     "footer": {
       "phone": "Telefon",
       "rights": "Alle rettigheter reservert."
+    },
+    "loginHeroPanel": {
+      "featureDonations": "Donasjoner og økonomisporing",
+      "featurePeople": "Person- og husstandsadministrasjon",
+      "featurePlanning": "Gudstjenesteplanlegging og timeplan",
+      "featureWebsite": "Nettstedbygger og innholdsstyring",
+      "subtitle": "Administrer menigheten din, planlegg gudstjenester, følg oppmøte og håndter donasjoner — alt på ett sted.",
+      "title": "Enkel menighetsstyring"
     },
     "wrapper": {
       "att": "Oppmøte",
@@ -396,6 +409,17 @@
       "donor": "Giver",
       "noDon": "Ingen donasjoner for valgt datoperiode",
       "subtitle": "Administrer donasjonsfond og spor givekategorier"
+    },
+    "kpi": {
+      "avgGift": "Gjennomsnittlig gave",
+      "donationCount": "Totale donasjoner",
+      "donorCount": "Unike givere",
+      "totalGiving": "Totale gaver"
+    },
+    "period": {
+      "monthly": "Månedlig",
+      "quarterly": "Kvartalsvis",
+      "weekly": "Ukentlig"
     }
   },
   "forms": {
@@ -1033,6 +1057,20 @@
       "editAssign": "Rediger tildeling",
       "noMem": "Ingen gruppemedlemmer funnet."
     },
+    "bulkLessonSchedule": {
+      "biWeekly": "Annenhver uke",
+      "date": "Dato",
+      "interval": "Intervall",
+      "lesson": "Leksjon",
+      "lessonsToSchedule": "leksjoner å planlegge",
+      "noPreviousLesson": "Ingen tidligere leksjon funnet. Planlegg minst én leksjon først.",
+      "noRemainingLessons": "Ingen gjenstående leksjoner i denne serien. Du har fullført alle!",
+      "startDate": "Startdato",
+      "startingLesson": "Startleksjon",
+      "title": "Masseplanlegg leksjoner",
+      "venue": "Sted",
+      "weekly": "Ukentlig"
+    },
     "contentProviderAuth": {
       "deviceFlowInstructions": "Besøk URLen nedenfor og skriv inn koden for å autorisere:",
       "errorGeneric": "Kunne ikke koble leverandør. Vennligst prøv igjen.",
@@ -1113,6 +1151,7 @@
       "seconds": "Sekunder"
     },
     "planList": {
+      "bulkSchedule": "Masseplanlegging",
       "createFirst": "Lag første plan",
       "createPlan": "Lag plan",
       "newPlan": "Ny plan",
@@ -1808,6 +1847,30 @@
       "members": "Medlemmer",
       "phoneNum": "Telefonnummer",
       "visibilityPreference": "Synlighetspreferanse"
+    }
+  },
+  "mobile": {
+    "appThemeEdit": {
+      "description": "Disse fargene brukes av mobilappen, medlemsportalen og innsjekkingskiosken. La dem stå som standard eller tilpass dem for å matche din merkevare.",
+      "resetDefaults": "Tilbakestill til standard",
+      "lightMode": "Lys modus",
+      "darkMode": "Mørk modus"
+    },
+    "appThemePage": {
+      "title": "App-tema",
+      "subtitle": "Tilpass fargene som brukes av mobilappen, medlemsportalen og innsjekkingskiosken"
+    },
+    "b1MobilePage": {
+      "title": "B1 Mobile",
+      "subtitle": "Konfigurer innstillinger for B1 Mobile-appen"
+    },
+    "checkInPage": {
+      "title": "B1 CheckIn",
+      "subtitle": "Konfigurer innstillinger for B1 CheckIn kiosk-appen",
+      "qrGuestRegistration": "QR-gjesterregistrering",
+      "qrTooltip": "Vis en QR-kode på innsjekkingskiosken slik at gjester kan registrere seg selv på telefonen sin",
+      "enabled": "Aktivert — QR-kode vises på kiosken",
+      "disabled": "Deaktivert"
     }
   },
   "site": {

@@ -24,6 +24,7 @@ const TasksPage = React.lazy(() => import("./serving/tasks/TasksPage").then((mod
 const TaskPage = React.lazy(() => import("./serving/tasks/TaskPage").then((module) => ({ default: module.TaskPage })));
 const AutomationsPage = React.lazy(() => import("./serving/tasks/automations/AutomationsPage").then((module) => ({ default: module.AutomationsPage })));
 const DashboardPage = React.lazy(() => import("./dashboard/DashboardPage").then((module) => ({ default: module.DashboardPage })));
+const QuickActionsPage = React.lazy(() => import("./dashboard/QuickActionsPage").then((module) => ({ default: module.QuickActionsPage })));
 const AdminPage = React.lazy(() => import("./serverAdmin/AdminPage").then((module) => ({ default: module.AdminPage })));
 const ProfilePage = React.lazy(() => import("./profile/ProfilePage").then((module) => ({ default: module.ProfilePage })));
 const ServingPage = React.lazy(() => import("./serving/ServingPage").then((module) => ({ default: module.ServingPage })));
@@ -47,7 +48,11 @@ const LiveStreamTimesPage = React.lazy(() => import("./sermons/LiveStreamTimesPa
 const BulkImportPage = React.lazy(() => import("./sermons/BulkImportPage").then((module) => ({ default: module.BulkImportPage })));
 const CalendarsPage = React.lazy(() => import("./calendars/CalendarsPage").then((module) => ({ default: module.CalendarsPage })));
 const CalendarPage = React.lazy(() => import("./calendars/CalendarPage").then((module) => ({ default: module.CalendarPage })));
+const RegistrationsPage = React.lazy(() => import("./registrations/RegistrationsPage").then((module) => ({ default: module.RegistrationsPage })));
+const RegistrationDetailsPage = React.lazy(() => import("./registrations/RegistrationDetailsPage").then((module) => ({ default: module.RegistrationDetailsPage })));
 const Site = React.lazy(() => import("./site").then((module) => ({ default: module.Site })));
+const Mobile = React.lazy(() => import("./mobile").then((module) => ({ default: module.Mobile })));
+const EmailTemplatesPage = React.lazy(() => import("./settings/EmailTemplatesPage").then((module) => ({ default: module.EmailTemplatesPage })));
 
 // Loading component for Suspense fallback
 const LoadingFallback: React.FC = () => (
@@ -108,6 +113,7 @@ export const Authenticated: React.FC = () => {
           <Route path="/forms" element={<FormsPage />} />
           <Route path="/reports/:keyName" element={<ReportPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/email-templates" element={<EmailTemplatesPage />} />
           <Route path="/settings/*" element={<Settings />} />
           <Route path="/serving/tasks/automations" element={<AutomationsPage />} />
           <Route path="/serving/tasks/:id" element={<TaskPage />} />
@@ -123,10 +129,14 @@ export const Authenticated: React.FC = () => {
           <Route path="/sermons/times" element={<LiveStreamTimesPage />} />
           <Route path="/sermons/bulk" element={<BulkImportPage />} />
           <Route path="/sermons" element={<SermonsPage />} />
+          <Route path="/registrations/:eventId" element={<RegistrationDetailsPage />} />
+          <Route path="/registrations" element={<RegistrationsPage />} />
           <Route path="/calendars/:id" element={<CalendarPage />} />
           <Route path="/calendars" element={<CalendarsPage />} />
           <Route path="/site/*" element={<Site />} />
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/mobile/*" element={<Mobile />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/" element={<QuickActionsPage />} />
         </Route>
 
         <Route

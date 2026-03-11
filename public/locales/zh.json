@@ -205,12 +205,25 @@
     "tryAgain": "重试",
     "update": "更新",
     "website": "网站",
+    "mobile": "移动端",
+    "navigation": "导航",
+    "appTheme": "应用主题",
+    "b1Mobile": "B1 Mobile",
+    "b1CheckIn": "B1 CheckIn",
     "yes": "是"
   },
   "components": {
     "footer": {
       "phone": "电话",
       "rights": "版权所有。"
+    },
+    "loginHeroPanel": {
+      "featureDonations": "捐款与财务跟踪",
+      "featurePeople": "人员和家庭管理",
+      "featurePlanning": "礼拜规划与日程安排",
+      "featureWebsite": "网站构建与内容管理",
+      "subtitle": "管理您的会众，规划礼拜，跟踪出勤，处理捐款——全部在一个地方完成。",
+      "title": "简化教会管理"
     },
     "wrapper": {
       "att": "出席",
@@ -396,6 +409,17 @@
       "donor": "捐赠者",
       "noDon": "所选日期范围内无捐款",
       "subtitle": "管理捐赠基金和跟踪捐赠类别"
+    },
+    "kpi": {
+      "avgGift": "平均捐款",
+      "donationCount": "总捐款次数",
+      "donorCount": "独立捐赠者",
+      "totalGiving": "总捐款"
+    },
+    "period": {
+      "monthly": "每月",
+      "quarterly": "每季度",
+      "weekly": "每周"
     }
   },
   "forms": {
@@ -1033,6 +1057,20 @@
       "editAssign": "编辑分配",
       "noMem": "未找到群组成员。"
     },
+    "bulkLessonSchedule": {
+      "biWeekly": "每两周",
+      "date": "日期",
+      "interval": "间隔",
+      "lesson": "课程",
+      "lessonsToSchedule": "待安排的课程",
+      "noPreviousLesson": "未找到上一节课。请先安排至少一节课。",
+      "noRemainingLessons": "本系列已无剩余课程。您已全部完成！",
+      "startDate": "开始日期",
+      "startingLesson": "起始课程",
+      "title": "批量安排课程",
+      "venue": "地点",
+      "weekly": "每周"
+    },
     "contentProviderAuth": {
       "deviceFlowInstructions": "访问下面的URL并输入代码进行授权：",
       "errorGeneric": "连接提供商失败。请重试。",
@@ -1113,6 +1151,7 @@
       "seconds": "秒"
     },
     "planList": {
+      "bulkSchedule": "批量安排",
       "createFirst": "创建第一个计划",
       "createPlan": "创建计划",
       "newPlan": "新计划",
@@ -1808,6 +1847,30 @@
       "members": "成员",
       "phoneNum": "电话号码",
       "visibilityPreference": "可见性偏好"
+    }
+  },
+  "mobile": {
+    "appThemeEdit": {
+      "description": "这些颜色用于移动应用、会员门户和签到自助终端。保留默认值或自定义以匹配您的品牌。",
+      "resetDefaults": "恢复默认值",
+      "lightMode": "浅色模式",
+      "darkMode": "深色模式"
+    },
+    "appThemePage": {
+      "title": "应用主题",
+      "subtitle": "自定义移动应用、会员门户和签到自助终端使用的颜色"
+    },
+    "b1MobilePage": {
+      "title": "B1 Mobile",
+      "subtitle": "配置 B1 Mobile 应用的设置"
+    },
+    "checkInPage": {
+      "title": "B1 CheckIn",
+      "subtitle": "配置 B1 CheckIn 自助终端应用的设置",
+      "qrGuestRegistration": "访客二维码注册",
+      "qrTooltip": "在签到自助终端上显示二维码，以便访客可以通过手机自行注册",
+      "enabled": "已启用 — 二维码将显示在自助终端上",
+      "disabled": "已禁用"
     }
   },
   "site": {

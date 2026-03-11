@@ -1,17 +1,18 @@
 import React from "react";
 import { DonationEdit, Donations, BatchEdit, BulkDonationEntry } from "./components";
-import { UserHelper, Permissions, DateHelper, PageHeader, Locale } from "@churchapps/apphelper";
+import { UserHelper, Permissions, DateHelper, PageHeader, Locale, CurrencyHelper } from "@churchapps/apphelper";
 import { type DonationBatchInterface, type FundInterface, type DonationInterface } from "@churchapps/helpers";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Card, Stack, Button, Typography } from "@mui/material";
-import { VolunteerActivism as DonationIcon, Receipt as ReceiptIcon, AttachMoney as MoneyIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Receipt as ReceiptIcon, AttachMoney as MoneyIcon, Edit as EditIcon } from "@mui/icons-material";
 
 export const DonationBatchPage = () => {
   const params = useParams();
   const [editDonationId, setEditDonationId] = React.useState("notset");
   const [editBatch, setEditBatch] = React.useState(false);
   const [donationsKey, setDonationsKey] = React.useState(0);
+  const [currency, setCurrency] = React.useState<string>("usd");
 
   const batch = useQuery<DonationBatchInterface>({ queryKey: ["/donationbatches/" + params.id, "GivingApi"] });
 
@@ -42,7 +43,7 @@ export const DonationBatchPage = () => {
 
   const getEditModules = () => {
     const result = [];
-    if (editDonationId !== "notset") result.push(<DonationEdit key="donationEdit" donationId={editDonationId} updatedFunction={donationUpdated} funds={funds.data} batchId={batch.data.id} />);
+    if (editDonationId !== "notset") result.push(<DonationEdit key="donationEdit" donationId={editDonationId} updatedFunction={donationUpdated} funds={funds.data} batchId={batch.data.id} currency={currency} />);
     if (editBatch && batch.data?.id) result.push(<BatchEdit key="batchEdit" batchId={batch.data.id} updatedFunction={batchUpdated} />);
     return result;
   };
@@ -64,12 +65,17 @@ export const DonationBatchPage = () => {
     }
   }, [donations.data]);
 
+  React.useEffect(() => {
+    CurrencyHelper.loadCurrency().then((result) => {
+      setCurrency(result);
+    })
+  }, []);
+
   if (!UserHelper.checkAccess(Permissions.givingApi.donations.view)) return <></>;
 
   return (
     <>
       <PageHeader
-        icon={<DonationIcon />}
         title={batch.data?.name || Locale.label("donations.donationBatchPage.title")}
         subtitle={batch.data?.batchDate ? `${Locale.label("donations.donationBatchPage.batchDate")} ${DateHelper.prettyDate(new Date(batch.data.batchDate.split("T")[0] + "T00:00:00"))}` : Locale.label("donations.donationBatchPage.subtitle")}
       >
@@ -100,8 +106,8 @@ export const DonationBatchPage = () => {
               </Stack>
               <Stack spacing={0.5} alignItems="center" sx={{ minWidth: 100 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <MoneyIcon sx={{ color: "#FFF", fontSize: 24 }} />
-                  <Typography variant="h5" sx={{ color: "#FFF", fontWeight: 700 }}>{stats.totalAmount.toLocaleString("en-US", { style: "decimal", minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Typography>
+                  {/* <MoneyIcon sx={{ color: "#FFF", fontSize: 24 }} /> */}
+                  <Typography variant="h5" sx={{ color: "#FFF", fontWeight: 700 }}>{CurrencyHelper.formatCurrencyWithLocale(stats.totalAmount, currency, 0)}</Typography>
                 </Stack>
                 <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: 0.5 }}>Total Amount</Typography>
               </Stack>
@@ -147,7 +153,7 @@ export const DonationBatchPage = () => {
 
         {/* Main donations table */}
         <Card>
-          <Donations key={donationsKey} batch={batch.data} editFunction={showEditDonation} funds={funds.data} />
+          <Donations key={donationsKey} batch={batch.data} editFunction={showEditDonation} funds={funds.data} currency={currency} />
         </Card>
       </Box>
     </>

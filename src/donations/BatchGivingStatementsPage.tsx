@@ -6,8 +6,7 @@ import {
 } from "@mui/material";
 import {
   DownloadOutlined as DownloadIcon,
-  PrintOutlined as PrintIcon,
-  VolunteerActivism as DonationIcon
+  PrintOutlined as PrintIcon
 } from "@mui/icons-material";
 import { PageHeader, Locale, CurrencyHelper, UserHelper, Permissions, ArrayHelper } from "@churchapps/apphelper";
 import { type DonationInterface, type FundDonationInterface, type PersonInterface, type FundInterface } from "@churchapps/helpers";
@@ -16,6 +15,7 @@ import JSZip from "jszip";
 export const BatchGivingStatementsPage = () => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+  const [currency, setCurrency] = useState<string>("usd");
 
   if (!UserHelper.checkAccess(Permissions.givingApi.donations.viewSummary)) return <></>;
 
@@ -186,10 +186,15 @@ export const BatchGivingStatementsPage = () => {
   // Generate year options (current year and previous 5 years)
   const yearOptions = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
+  React.useEffect(() => {
+    CurrencyHelper.loadCurrency().then((result) => {
+      setCurrency(result);
+    });
+  }, []);
+
   return (
     <>
       <PageHeader
-        icon={<DonationIcon />}
         title={Locale.label("donations.batchStatements.title") || "Batch Giving Statements"}
         subtitle={Locale.label("donations.batchStatements.subtitle") || "Download giving statements for all donors"}
       />
@@ -254,7 +259,7 @@ export const BatchGivingStatementsPage = () => {
                         {Locale.label("donations.batchStatements.totalAmount") || "Total Amount:"}
                       </Typography>
                       <Typography variant="body1" fontWeight="bold" color="primary">
-                        {CurrencyHelper.formatCurrency(totalAmount)}
+                        {CurrencyHelper.formatCurrencyWithLocale(totalAmount, currency)}
                       </Typography>
                     </Box>
                   </Stack>
