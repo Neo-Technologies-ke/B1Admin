@@ -55,7 +55,7 @@ export const ManageChurch = () => {
 
   return (
     <>
-      <PageHeader icon={<SettingsIcon />} title={church.data?.name || Locale.label("settings.manageChurch.title")} subtitle={church.data?.subDomain ? `${church.data.subDomain}.b1.church` : Locale.label("settings.manageChurch.subtitle")}>
+      <PageHeader icon={<SettingsIcon />} title={church.data?.name || Locale.label("settings.manageChurch.title")} subtitle={church.data?.subDomain ? `${church.data.subDomain}.lifereformationcentre.org` : Locale.label("settings.manageChurch.subtitle")}>
         <Stack direction="row" spacing={1}>
           {UserHelper.checkAccess(Permissions.membershipApi.settings.edit) && (
             <Button
@@ -107,7 +107,7 @@ export const ManageChurch = () => {
           <Button
             variant="outlined"
             startIcon={<PlayArrowIcon />}
-            href={`https://transfer.b1.church/login?jwt=${jwt}&churchId=${churchId}`}
+            href={`https://transfer.lifereformationcentre.org/login?jwt=${jwt}&churchId=${churchId}`}
             target="_blank"
             rel="noreferrer noopener"
             sx={{
