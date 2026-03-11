@@ -97,8 +97,8 @@ export class EnvironmentHelper {
     EnvironmentHelper.Common.ContentRoot = process.env.REACT_APP_CONTENT_ROOT || "/api/content";
     EnvironmentHelper.Common.B1Root = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
     EnvironmentHelper.Common.B1AdminRoot = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
-    EnvironmentHelper.Common.LessonsRoot = "https://lessons.church";
-    EnvironmentHelper.LessonsApi = process.env.REACT_APP_LESSONS_API || "https://api.lessons.church";
+    EnvironmentHelper.Common.LessonsRoot = "https://lessons.lifereformationcentre.org";
+    EnvironmentHelper.LessonsApi = process.env.REACT_APP_LESSONS_API || "https://api.lifereformationcentre.org/lessons";
     EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
   };
 
@@ -111,7 +111,7 @@ export class EnvironmentHelper {
   //NOTE: None of these values are secret.
   static initProd = () => {
     EnvironmentHelper.Common.GoogleAnalyticsTag = "G-47N4XQJQJ5";
-    EnvironmentHelper.LessonsApi = "https://api.lessons.church";
+    EnvironmentHelper.LessonsApi = "https://api.lifereformationcentre.org/lessons";
     EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || "https://{subdomain}.lifereformationcentre.org";
   };
 }
