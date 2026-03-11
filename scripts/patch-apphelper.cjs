@@ -28,7 +28,7 @@ try {
   const originalLessonsLine = '<NavItem url={`${CommonEnvironmentHelper.LessonsRoot}/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Lessons.church"} external={true} label="Lessons.church" icon="logout" onNavigate={props.onNavigate} />';
 
   // New content
-  const patchedB1Line = '<NavItem url={`https://transfer.b1.church/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Portal"} external={true} label="Portal" icon="logout" onNavigate={props.onNavigate} />';
+  const patchedB1Line = '<NavItem url={`https://transfer.b1.church/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Import/Export"} external={true} label="Import/Export" icon="logout" onNavigate={props.onNavigate} />';
   const patchedLessonsLine = '<NavItem url={`https://lessons.church/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Lessons"} external={true} label="Lessons" icon="logout" onNavigate={props.onNavigate} />';
 
   // Check if already patched
@@ -52,7 +52,7 @@ try {
     // Write the patched content back
     fs.writeFileSync(APPHELPER_PATH, content, 'utf8');
     console.log('✅ Successfully patched AppList.tsx');
-    console.log('   - B1.Church → Portal (transfer.b1.church)');
+    console.log('   - B1.Church → Import/Export (transfer.b1.church)');
     console.log('   - Lessons.church → Lessons (lessons.church)');
   } else {
     console.log('⚠️  Could not find expected content to patch');
