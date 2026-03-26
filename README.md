@@ -1,8 +1,8 @@
-<img align="right" width="150" src="https://raw.githubusercontent.com/ChurchApps/B1Admin/main/public/images/logo.png">
+<img align="right" width="150" src="https://raw.githubusercontent.com/Neo-Technologies-ke/B1Admin/main/public/images/logo.png">
 
 # B1Admin
 
-> **B1Admin** is completely free, open-source church management software that allows you to manage key data on church members and visitors. It offers comprehensive features including member and guest information tracking, attendance management with a self check-in app, group coordination, donation tracking with detailed reports, and custom form creation. Visit <a href="https://b1.church/">https://b1.church/</a> to learn more.
+> **B1Admin** is completely free, open-source church management software that allows you to manage key data on church members and visitors. It offers comprehensive features including member and guest information tracking, attendance management with a self check-in app, group coordination, donation tracking with detailed reports, and custom form creation. Visit <a href="https://lifereformationcentre.org/">https://lifereformationcentre.org/</a> to learn more.
 
 <div style="display: flex;gap: 10px;">
     <img style="width: 49%;" src="https://github.com/ChurchApps/B1Admin/assets/1447203/ccb5dc7b-8c0d-4320-abac-a3128c42beff">
@@ -17,15 +17,15 @@
 
 ### 🤝 Help Support Us
 
-The only reason this program is free is because of the generous support from users. If you want to support us to keep this free, please head over to [ChurchApps](https://churchapps/partner) or [sponsor us on GitHub](https://github.com/sponsors/ChurchApps/). Thank you so much!
+The only reason this program is free is because of the generous support from users. If you want to support us to keep this free, please head over to [Life Reformation Centre](https://lifereformationcentre.org/support) or [sponsor us on GitHub](https://github.com/sponsors/Neo-Technologies-ke/). Thank you so much!
 
 ### 🏘️ Join the Community
 
-We have a great community for end-users on [Facebook](https://www.facebook.com/churchapps.org). It's a good way to ask questions, get tips and follow new updates. Come join us!
+We have a great community for end-users. It's a good way to ask questions, get tips and follow new updates. Contact us at info@lifereformationcentre.org to join!
 
 ### ⚠️ Report an Issue
 
-If you discover an issue or have a feature request, simply submit it to our [issues log](https://github.com/ChurchApps/ChurchAppsSupport/issues). Don't be shy, that's how the program gets better.
+If you discover an issue or have a feature request, simply submit it to our [issues log](https://github.com/Neo-Technologies-ke/Support/issues). Don't be shy, that's how the program gets better.
 
 ### 💬 Join us on Slack
 
@@ -33,7 +33,7 @@ If you would like to contribute in any way, head over to our [Slack Channel](htt
 
 ### 🏗️ Start Coding
 
-If you'd like to set up the project locally, see our [development guide](https://churchapps.org/dev). The short version is:
+If you'd like to set up the project locally, see our [development guide](https://lifereformationcentre.org/developers). The short version is:
 
 1. Copy `dotenv.sample.txt` to `.env` and updated it to point to the appropriate API urls.
 2. Install the dependencies with: `npm install`
