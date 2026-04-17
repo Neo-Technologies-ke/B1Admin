@@ -53,7 +53,7 @@ export class EnvironmentHelper {
       };
       const mapped = byKey[c.keyName];
       if (mapped) return { ...c, url: mapped };
-      return c.url?.includes("churchapps.org") ? { ...c, url: c.url.replace(/^https:\/\/api\.churchapps\.org/, "/api") } : c;
+      return c.url?.includes("lifereformationcentre.org") ? { ...c, url: c.url.replace(/^https:\/\/api\.lifereformationcentre\.org/, "/api") } : c;
     });
 
     ApiHelper.apiConfigs.push(
