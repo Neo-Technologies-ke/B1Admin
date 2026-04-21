@@ -120,6 +120,12 @@ dist
 # TernJS port file
 .tern-port
 
+# Data and script files (DO NOT COMMIT)
+*.mjs
+*.csv
+*.xlsx
+*.xls
+
 # VPS Deployment - Sensitive Files (DO NOT COMMIT)
 *_DEPLOYMENT*.md
 DEPLOYMENT_*.md
