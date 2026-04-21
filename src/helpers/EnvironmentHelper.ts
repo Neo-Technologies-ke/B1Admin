@@ -10,18 +10,9 @@ export class EnvironmentHelper {
   static init = async () => {
     const stage = process.env.REACT_APP_STAGE;
 
-    switch (stage) {
-      case "staging": EnvironmentHelper.initStaging(); break;
-      case "prod": 
-        // For production, use initDev() which sets relative /api paths
-        // This allows nginx to proxy to our local API
-        EnvironmentHelper.initDev();
-        break;
-      default: EnvironmentHelper.initDev(); break;
-    }
-    
-    // Skip CommonEnvironmentHelper.init() for all stages to avoid overwriting
-    // We're handling initialization ourselves above
+    // Always call initDev() so REACT_APP_* env vars are applied.
+    // initStaging() only set LessonsApi/B1Url and left all API URLs blank.
+    EnvironmentHelper.initDev();
 
     const forceLocalApi = () => {
       EnvironmentHelper.Common.AttendanceApi = "/api/attendance";
@@ -36,25 +27,31 @@ export class EnvironmentHelper {
       EnvironmentHelper.Common.ContentRoot = "/api/content";
     };
 
-    forceLocalApi();
-    WebsiteEnvironmentHelper.init();
-    forceLocalApi();
+    // Only override with relative /api/* paths for prod (nginx proxies /api/* there).
+    // Staging uses full absolute URLs from REACT_APP_* env vars.
+    if (stage === "prod") {
+      forceLocalApi();
+      WebsiteEnvironmentHelper.init();
+      forceLocalApi();
 
-    ApiHelper.apiConfigs = ApiHelper.apiConfigs.map(c => {
-      const byKey: Record<string, string> = {
-        AttendanceApi: "/api/attendance",
-        DoingApi: "/api/doing",
-        GivingApi: "/api/giving",
-        MembershipApi: "/api/membership",
-        ReportingApi: "/api/reporting",
-        MessagingApi: "/api/messaging",
-        ContentApi: "/api/content",
-        AskApi: "/api/ask"
-      };
-      const mapped = byKey[c.keyName];
-      if (mapped) return { ...c, url: mapped };
-      return c.url?.includes("lifereformationcentre.org") ? { ...c, url: c.url.replace(/^https:\/\/api\.lifereformationcentre\.org/, "/api") } : c;
-    });
+      ApiHelper.apiConfigs = ApiHelper.apiConfigs.map(c => {
+        const byKey: Record<string, string> = {
+          AttendanceApi: "/api/attendance",
+          DoingApi: "/api/doing",
+          GivingApi: "/api/giving",
+          MembershipApi: "/api/membership",
+          ReportingApi: "/api/reporting",
+          MessagingApi: "/api/messaging",
+          ContentApi: "/api/content",
+          AskApi: "/api/ask"
+        };
+        const mapped = byKey[c.keyName];
+        if (mapped) return { ...c, url: mapped };
+        return c.url?.includes("lifereformationcentre.org") ? { ...c, url: c.url.replace(/^https:\/\/api\.lifereformationcentre\.org/, "/api") } : c;
+      });
+    } else {
+      WebsiteEnvironmentHelper.init();
+    }
 
     ApiHelper.apiConfigs.push(
       {
