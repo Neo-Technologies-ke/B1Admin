@@ -10,11 +10,15 @@ export class EnvironmentHelper {
   static init = async () => {
     const stage = process.env.REACT_APP_STAGE;
 
-    // Always call initDev() so REACT_APP_* env vars are applied.
-    // initStaging() only set LessonsApi/B1Url and left all API URLs blank.
+    // Call WebsiteEnvironmentHelper.init() first so its internal hasInit guard
+    // fires and it can never run again to overwrite our URLs.
+    WebsiteEnvironmentHelper.init();
+
+    // Now apply our URLs — these will not be overwritten by WebsiteEnvironmentHelper.
     EnvironmentHelper.initDev();
 
-    const forceLocalApi = () => {
+    // For prod, nginx proxies /api/* locally so switch to relative paths.
+    if (stage === "prod") {
       EnvironmentHelper.Common.AttendanceApi = "/api/attendance";
       EnvironmentHelper.Common.DoingApi = "/api/doing";
       EnvironmentHelper.Common.GivingApi = "/api/giving";
@@ -25,33 +29,17 @@ export class EnvironmentHelper {
       EnvironmentHelper.Common.ContentApi = "/api/content";
       EnvironmentHelper.Common.AskApi = "/api/ask";
       EnvironmentHelper.Common.ContentRoot = "/api/content";
-    };
-
-    // Only override with relative /api/* paths for prod (nginx proxies /api/* there).
-    // Staging uses full absolute URLs from REACT_APP_* env vars.
-    if (stage === "prod") {
-      forceLocalApi();
-      WebsiteEnvironmentHelper.init();
-      forceLocalApi();
-
-      ApiHelper.apiConfigs = ApiHelper.apiConfigs.map(c => {
-        const byKey: Record<string, string> = {
-          AttendanceApi: "/api/attendance",
-          DoingApi: "/api/doing",
-          GivingApi: "/api/giving",
-          MembershipApi: "/api/membership",
-          ReportingApi: "/api/reporting",
-          MessagingApi: "/api/messaging",
-          ContentApi: "/api/content",
-          AskApi: "/api/ask"
-        };
-        const mapped = byKey[c.keyName];
-        if (mapped) return { ...c, url: mapped };
-        return c.url?.includes("lifereformationcentre.org") ? { ...c, url: c.url.replace(/^https:\/\/api\.lifereformationcentre\.org/, "/api") } : c;
-      });
-    } else {
-      WebsiteEnvironmentHelper.init();
     }
+
+    // Rebuild ApiHelper.apiConfigs from our authoritative URLs.
+    ApiHelper.apiConfigs = [
+      { keyName: "AttendanceApi", url: EnvironmentHelper.Common.AttendanceApi, jwt: "", permissions: [] },
+      { keyName: "DoingApi", url: EnvironmentHelper.Common.DoingApi, jwt: "", permissions: [] },
+      { keyName: "GivingApi", url: EnvironmentHelper.Common.GivingApi, jwt: "", permissions: [] },
+      { keyName: "MembershipApi", url: EnvironmentHelper.Common.MembershipApi, jwt: "", permissions: [] },
+      { keyName: "MessagingApi", url: EnvironmentHelper.Common.MessagingApi, jwt: "", permissions: [] },
+      { keyName: "ContentApi", url: EnvironmentHelper.Common.ContentApi, jwt: "", permissions: [] },
+    ];
 
     ApiHelper.apiConfigs.push(
       {
