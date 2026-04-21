@@ -125,6 +125,10 @@ dist
 *.csv
 *.xlsx
 *.xls
+*.Identifier
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # VPS Deployment - Sensitive Files (DO NOT COMMIT)
 *_DEPLOYMENT*.md
