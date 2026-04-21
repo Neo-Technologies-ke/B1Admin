@@ -6,8 +6,8 @@ export const Footer: React.FC = () => (
   <div id="footer">
     <Box sx={{ textAlign: "center" }}>
       <img src="/images/logo.png" alt="logo" />
-      <p>{Locale.label("components.footer.phone")}: 918-994-2638 &nbsp; | &nbsp; support@b1.church</p>
-      <p>2020 © Live Church Solutions. {Locale.label("components.footer.rights")}</p>
+      <p>Contact: info@lifereformationcentre.org</p>
+      <p>© {new Date().getFullYear()} Life Reformation Centre. {Locale.label("components.footer.rights")}</p>
     </Box>
   </div>
 );

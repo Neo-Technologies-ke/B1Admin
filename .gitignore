@@ -119,3 +119,39 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Data and script files (DO NOT COMMIT)
+*.mjs
+*.csv
+*.xlsx
+*.xls
+*.Identifier
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VPS Deployment - Sensitive Files (DO NOT COMMIT)
+*_DEPLOYMENT*.md
+DEPLOYMENT_*.md
+VPS_*.md
+DOCKER-*.md
+CHURCH-BRANDING-*.md
+docker-compose.*.yml
+*.sh
+init-databases.sql
+
+# Environment files with secrets (DO NOT COMMIT)
+.env*
+!.env.sample
+*.env.demo*
+*.env.staging*
+*.env.prod*
+*.env.main
+
+# Password files (DO NOT COMMIT)
+*.passwords.txt
+.passwords*
+
+# Backup files (DO NOT COMMIT)
+*.backup-*
+*.bak

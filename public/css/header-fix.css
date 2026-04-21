@@ -1,0 +1,24 @@
+/* Header layout fix - prevent text overlay */
+
+/* Ensure proper spacing for app bar */
+#appBarSpacer {
+  height: 64px;
+  margin-bottom: 0;
+}
+
+/* Fix header to prevent overlay */
+header.MuiAppBar-root {
+  z-index: 1100;
+}
+
+/* Ensure content doesn't overlap with header */
+#root > div {
+  padding-top: 0;
+}
+
+/* Fix for mobile responsive header */
+@media (max-width: 740px) {
+  #appBarSpacer {
+    height: 60px;
+  }
+}

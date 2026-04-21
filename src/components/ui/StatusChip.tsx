@@ -41,6 +41,18 @@ const getStatusColors = (status: string, variant: "standard" | "header") => {
         color: "#1565c0",
         fontWeight: 600
       };
+    case "regular attendee":
+      return {
+        backgroundColor: "#f3e5f5",
+        color: "#6a1b9a",
+        fontWeight: 600
+      };
+    case "inactive":
+      return {
+        backgroundColor: "#fafafa",
+        color: "#9e9e9e",
+        fontWeight: 600
+      };
     default:
       return {
         color: "text.secondary",
@@ -52,7 +64,7 @@ const getStatusColors = (status: string, variant: "standard" | "header") => {
 
 export const StatusChip: React.FC<StatusChipProps> = ({ status, variant = "standard", size = "small" }) => {
   const colors = getStatusColors(status, variant);
-  const isOutlined = variant === "standard" && !["member", "active", "visitor", "pending", "staff"].includes(status.toLowerCase());
+  const isOutlined = variant === "standard" && !["member", "active", "visitor", "pending", "staff", "regular attendee", "inactive"].includes(status.toLowerCase());
 
   return <Chip label={status} size={size} variant={isOutlined ? "outlined" : "filled"} sx={colors} />;
 };

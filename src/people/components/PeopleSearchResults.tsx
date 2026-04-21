@@ -103,8 +103,8 @@ const PeopleSearchResults = memo(function PeopleSearchResults(props: Props) {
                   sx={{
                     fontSize: "0.75rem",
                     mt: 0.5,
-                    backgroundColor: p.membershipStatus === "Member" ? "rgba(46, 125, 50, 0.15)" : p.membershipStatus === "Visitor" ? "rgba(237, 108, 2, 0.15)" : "var(--bg-sub)",
-                    color: p.membershipStatus === "Member" ? "#4caf50" : p.membershipStatus === "Visitor" ? "#ff9800" : "var(--text-muted)",
+                    backgroundColor: p.membershipStatus === "Member" ? "rgba(46, 125, 50, 0.15)" : p.membershipStatus === "Visitor" ? "rgba(237, 108, 2, 0.15)" : p.membershipStatus === "Staff" ? "rgba(21, 101, 192, 0.15)" : p.membershipStatus === "Regular Attendee" ? "rgba(106, 27, 154, 0.15)" : "var(--bg-sub)",
+                    color: p.membershipStatus === "Member" ? "#4caf50" : p.membershipStatus === "Visitor" ? "#ff9800" : p.membershipStatus === "Staff" ? "#1565c0" : p.membershipStatus === "Regular Attendee" ? "#6a1b9a" : "var(--text-muted)",
                     borderColor: "transparent"
                   }}
                 />
@@ -161,8 +161,8 @@ const PeopleSearchResults = memo(function PeopleSearchResults(props: Props) {
               variant="outlined"
               sx={{
                 fontSize: "0.75rem",
-                backgroundColor: p.membershipStatus === "Member" ? "rgba(46, 125, 50, 0.15)" : p.membershipStatus === "Visitor" ? "rgba(237, 108, 2, 0.15)" : "var(--bg-sub)",
-                color: p.membershipStatus === "Member" ? "#4caf50" : p.membershipStatus === "Visitor" ? "#ff9800" : "var(--text-muted)",
+                backgroundColor: p.membershipStatus === "Member" ? "rgba(46, 125, 50, 0.15)" : p.membershipStatus === "Visitor" ? "rgba(237, 108, 2, 0.15)" : p.membershipStatus === "Staff" ? "rgba(21, 101, 192, 0.15)" : p.membershipStatus === "Regular Attendee" ? "rgba(106, 27, 154, 0.15)" : "var(--bg-sub)",
+                color: p.membershipStatus === "Member" ? "#4caf50" : p.membershipStatus === "Visitor" ? "#ff9800" : p.membershipStatus === "Staff" ? "#1565c0" : p.membershipStatus === "Regular Attendee" ? "#6a1b9a" : "var(--text-muted)",
                 borderColor: "transparent"
               }}
             />

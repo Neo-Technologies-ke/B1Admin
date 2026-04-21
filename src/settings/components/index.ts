@@ -1,5 +1,6 @@
 export * from "../../components";
 export { ChurchSettingsEdit } from "./ChurchSettingsEdit";
+export { ChurchBrandingEdit } from "./ChurchBrandingEdit";
 export { SettingsSectionHeader } from "./SettingsSectionHeader";
 
 export { RoleEdit } from "./RoleEdit";
