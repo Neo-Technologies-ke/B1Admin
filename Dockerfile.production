@@ -75,6 +75,7 @@ RUN npm run build
 # Patch compiled JavaScript to replace B1.Church and Lessons.church labels and URLs
 RUN PORTAL_URL=${REACT_APP_B1_WEBSITE_URL:-https://portal.lifereformationcentre.org} && \
     LESSONS_URL=${REACT_APP_LESSONS_URL:-https://lessons.lifereformationcentre.org} && \
+    ADMIN_URL=${REACT_APP_B1_ADMIN_URL:-https://admin.lifereformationcentre.org} && \
     find dist/assets -type f -name "*.js" -exec sed -i \
       -e 's/label:"B1\.Church"/label:"Portal"/g' \
       -e 's/label:"Lessons\.church"/label:"Lessons"/g' \
@@ -83,7 +84,9 @@ RUN PORTAL_URL=${REACT_APP_B1_WEBSITE_URL:-https://portal.lifereformationcentre.
       -e "s#https://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
       -e "s#http://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
       -e "s#https://lessons\.church#${LESSONS_URL}#g" \
-      -e "s#http://lessons\.church#${LESSONS_URL}#g" {} +
+      -e "s#http://lessons\.church#${LESSONS_URL}#g" {} + && \
+    find dist/assets -type f -name "*.js" -exec sed -i \
+      -e "s#B1AdminRoot=\"${PORTAL_URL}\"#B1AdminRoot=\"${ADMIN_URL}\"#g" {} +
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
