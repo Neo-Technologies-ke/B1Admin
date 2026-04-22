@@ -3,63 +3,50 @@
 /**
  * Post-install patch script for @churchapps/apphelper
  * Replaces B1.Church and Lessons.church labels with Portal and Lessons
- * Updates URLs to point to transfer.b1.church and lessons.church
+ * Uses REACT_APP_B1_WEBSITE_URL and REACT_APP_LESSONS_URL env vars so
+ * staging and production get their respective portal/lessons URLs.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const APPHELPER_PATH = path.join(__dirname, '../node_modules/@churchapps/apphelper/src/components/wrapper/AppList.tsx');
+const APPHELPER_PATH = path.join(__dirname, '../node_modules/@churchapps/apphelper/dist/components/wrapper/AppList.js');
 
-console.log('🔧 Patching @churchapps/apphelper...');
+const portalUrl = process.env.REACT_APP_B1_WEBSITE_URL || 'https://portal.lifereformationcentre.org';
+const lessonsUrl = process.env.REACT_APP_LESSONS_URL || 'https://lessons.lifereformationcentre.org';
 
 try {
-  // Check if file exists
   if (!fs.existsSync(APPHELPER_PATH)) {
-    console.log('⚠️  AppList.tsx not found, skipping patch');
     process.exit(0);
   }
 
-  // Read the file
   let content = fs.readFileSync(APPHELPER_PATH, 'utf8');
 
-  // Original content to replace
-  const originalB1Line = '<NavItem url={`${CommonEnvironmentHelper.B1Root.replace("{key}", props.currentUserChurch.church.subDomain)}/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "B1.church"} external={true} label="B1.Church" icon="logout" onNavigate={props.onNavigate} />';
-  const originalLessonsLine = '<NavItem url={`${CommonEnvironmentHelper.LessonsRoot}/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Lessons.church"} external={true} label="Lessons.church" icon="logout" onNavigate={props.onNavigate} />';
+  const originalB1Block = 'url: `${CommonEnvironmentHelper.B1Root.replace("{key}", props.currentUserChurch.church.subDomain)}/login?jwt=${jwt}&churchId=${churchId}`, selected: props.appName === "B1.church", external: true, label: "B1.Church"';
+  const originalLessonsBlock = 'url: `${CommonEnvironmentHelper.LessonsRoot}/login?jwt=${jwt}&churchId=${churchId}`, selected: props.appName === "Lessons.church", external: true, label: "Lessons.church"';
 
-  // New content
-  const patchedB1Line = '<NavItem url={`https://portal.lifereformationcentre.org/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Portal"} external={true} label="Portal" icon="logout" onNavigate={props.onNavigate} />';
-  const patchedLessonsLine = '<NavItem url={`https://lessons.church/login?jwt=${jwt}&churchId=${churchId}`} selected={props.appName === "Lessons"} external={true} label="Lessons" icon="logout" onNavigate={props.onNavigate} />';
+  const patchedB1Block = `url: \`${portalUrl}/login?jwt=\${jwt}&churchId=\${churchId}\`, selected: props.appName === "Portal", external: true, label: "Portal"`;
+  const patchedLessonsBlock = `url: \`${lessonsUrl}/login?jwt=\${jwt}&churchId=\${churchId}\`, selected: props.appName === "Lessons", external: true, label: "Lessons"`;
 
-  // Check if already patched
-  if (content.includes('portal.lifereformationcentre.org') && content.includes('lessons.church')) {
-    console.log('✅ AppList.tsx already patched');
+  if (content.includes(patchedB1Block) && content.includes(patchedLessonsBlock)) {
     process.exit(0);
   }
 
-  // Apply patches
   let patched = false;
-  if (content.includes(originalB1Line)) {
-    content = content.replace(originalB1Line, patchedB1Line);
+  if (content.includes(originalB1Block)) {
+    content = content.replace(originalB1Block, patchedB1Block);
     patched = true;
   }
-  if (content.includes(originalLessonsLine)) {
-    content = content.replace(originalLessonsLine, patchedLessonsLine);
+  if (content.includes(originalLessonsBlock)) {
+    content = content.replace(originalLessonsBlock, patchedLessonsBlock);
     patched = true;
   }
 
   if (patched) {
-    // Write the patched content back
     fs.writeFileSync(APPHELPER_PATH, content, 'utf8');
-    console.log('✅ Successfully patched AppList.tsx');
-    console.log('   - B1.Church → Portal (portal.lifereformationcentre.org)');
-    console.log('   - Lessons.church → Lessons (lessons.church)');
-  } else {
-    console.log('⚠️  Could not find expected content to patch');
   }
 
 } catch (error) {
-  console.error('❌ Error patching AppList.tsx:', error.message);
-  // Don't fail the install if patching fails
+  // Do not fail the install if patching fails
   process.exit(0);
 }
