@@ -46,6 +46,8 @@ ARG REACT_APP_REPORTING_API
 ARG REACT_APP_CONTENT_ROOT
 ARG REACT_APP_MESSAGING_API_SOCKET
 ARG REACT_APP_B1_WEBSITE_URL
+ARG REACT_APP_B1_ADMIN_URL
+ARG REACT_APP_LESSONS_URL
 ARG REACT_APP_GOOGLE_ANALYTICS
 
 # Set environment variables for build
@@ -60,6 +62,8 @@ ENV REACT_APP_REPORTING_API=$REACT_APP_REPORTING_API
 ENV REACT_APP_CONTENT_ROOT=$REACT_APP_CONTENT_ROOT
 ENV REACT_APP_MESSAGING_API_SOCKET=$REACT_APP_MESSAGING_API_SOCKET
 ENV REACT_APP_B1_WEBSITE_URL=$REACT_APP_B1_WEBSITE_URL
+ENV REACT_APP_B1_ADMIN_URL=$REACT_APP_B1_ADMIN_URL
+ENV REACT_APP_LESSONS_URL=$REACT_APP_LESSONS_URL
 ENV REACT_APP_GOOGLE_ANALYTICS=$REACT_APP_GOOGLE_ANALYTICS
 
 # Run postinstall to copy language files
@@ -69,15 +73,17 @@ RUN npm run postinstall
 RUN npm run build
 
 # Patch compiled JavaScript to replace B1.Church and Lessons.church labels and URLs
-RUN find dist/assets -type f -name "*.js" -exec sed -i \
-  -e 's/label:"B1\.Church"/label:"Portal"/g' \
-  -e 's/label:"Lessons\.church"/label:"Lessons"/g' \
-  -e 's/appName==="B1\.church"/appName==="Portal"/g' \
-  -e 's/appName==="Lessons\.church"/appName==="Lessons"/g' \
-  -e 's#https://[^"]*\.b1\.church#https://portal.lifereformationcentre.org#g' \
-  -e 's#https://lessons\.church#https://lessons.church#g' \
-  -e 's#http://[^"]*\.b1\.church#https://portal.lifereformationcentre.org#g' \
-  -e 's#http://lessons\.church#https://lessons.church#g' {} +
+RUN PORTAL_URL=${REACT_APP_B1_WEBSITE_URL:-https://portal.lifereformationcentre.org} && \
+    LESSONS_URL=${REACT_APP_LESSONS_URL:-https://lessons.lifereformationcentre.org} && \
+    find dist/assets -type f -name "*.js" -exec sed -i \
+      -e 's/label:"B1\.Church"/label:"Portal"/g' \
+      -e 's/label:"Lessons\.church"/label:"Lessons"/g' \
+      -e "s#appName===\"B1\.church\"#appName===\"Portal\"#g" \
+      -e "s#appName===\"Lessons\.church\"#appName===\"Lessons\"#g" \
+      -e "s#https://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
+      -e "s#http://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
+      -e "s#https://lessons\.church#${LESSONS_URL}#g" \
+      -e "s#http://lessons\.church#${LESSONS_URL}#g" {} +
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine

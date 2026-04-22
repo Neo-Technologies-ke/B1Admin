@@ -80,9 +80,9 @@ export class EnvironmentHelper {
     EnvironmentHelper.Common.AskApi = process.env.REACT_APP_ASK_API || "/api/ask";
     EnvironmentHelper.Common.GoogleAnalyticsTag = process.env.REACT_APP_GOOGLE_ANALYTICS || "G-47N4XQJQJ5";
     EnvironmentHelper.Common.ContentRoot = process.env.REACT_APP_CONTENT_ROOT || "/api/content";
-    EnvironmentHelper.Common.B1Root = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
-    EnvironmentHelper.Common.B1AdminRoot = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
-    EnvironmentHelper.Common.LessonsRoot = "https://lessons.lifereformationcentre.org";
+    EnvironmentHelper.Common.B1Root = process.env.REACT_APP_B1_WEBSITE_URL || "https://portal.lifereformationcentre.org";
+    EnvironmentHelper.Common.B1AdminRoot = process.env.REACT_APP_B1_ADMIN_URL || "https://admin.lifereformationcentre.org";
+    EnvironmentHelper.Common.LessonsRoot = process.env.REACT_APP_LESSONS_URL || "https://lessons.lifereformationcentre.org";
     EnvironmentHelper.LessonsApi = process.env.REACT_APP_LESSONS_API || "https://api.lifereformationcentre.org/lessons";
     EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
   };
