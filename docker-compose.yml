@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  b1admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: b1admin-dev
+    ports:
+      - "3101:3101"
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+      # Prevent overwriting node_modules
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_STAGE=demo
+      - PORT=3101
+      - REACT_APP_ATTENDANCE_API=https://api.staging.churchapps.org/attendance
+      - REACT_APP_GIVING_API=https://api.staging.churchapps.org/giving
+      - REACT_APP_MEMBERSHIP_API=https://api.staging.churchapps.org/membership
+      - REACT_APP_CONTENT_ROOT=https://content.staging.churchapps.org
+      - REACT_APP_B1_WEBSITE_URL=https://{subdomain}.staging.b1.church
+    networks:
+      - b1admin-network
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+networks:
+  b1admin-network:
+    driver: bridge
