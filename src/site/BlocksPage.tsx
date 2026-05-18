@@ -1,23 +1,17 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import { ApiHelper, Loading, PageHeader, UserHelper, Permissions, Locale } from "@churchapps/apphelper";
 import type { BlockInterface } from "../helpers";
 import { TableRow, TableCell, Table, TableBody, TableHead, Box, Typography, Stack, Button, Card, Icon } from "@mui/material";
-import { SmartButton as BlockIcon, Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
-import { Navigate, Link } from "react-router-dom";
+import { SmartButton as BlockIcon, Add as AddIcon, Edit as EditIcon, Settings as SettingsIcon } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 import { BlockEdit } from "./components";
+import { PermissionDenied } from "../components";
 
 export const BlocksPage = () => {
   const [blocks, setBlocks] = useState<BlockInterface[]>([]);
   const [editBlock, setEditBlock] = useState<BlockInterface>(null);
   const [loading, setLoading] = useState(true);
-  const [redirectUrl, setRedirectUrl] = useState<string>("");
-
-  const checkAccess = useCallback(() => {
-    if (!UserHelper.checkAccess(Permissions.contentApi.content.edit)) setRedirectUrl("/");
-  }, []);
-
-  useEffect(checkAccess, [checkAccess]);
 
   const loadData = () => {
     setLoading(true);
@@ -93,7 +87,10 @@ export const BlocksPage = () => {
             </Stack>
           </TableCell>
           <TableCell align="right">
-            <Button size="small" variant="outlined" component={Link} to={`/site/blocks/${block.id}`} startIcon={<EditIcon />} data-testid={`edit-block-${block.id}-button`} sx={{ textTransform: "none", minWidth: "auto" }}>{Locale.label("common.edit")}</Button>
+            <Stack direction="row" spacing={1} justifyContent="flex-end">
+              <Button size="small" variant="outlined" component={Link} to={`/site/blocks/${block.id}`} startIcon={<EditIcon />} sx={{ textTransform: "none", minWidth: "auto" }}>{Locale.label("common.edit")}</Button>
+              <Button size="small" variant="outlined" startIcon={<SettingsIcon />} onClick={() => setEditBlock(block)} data-testid={`rename-block-${block.id}-button`} sx={{ textTransform: "none", minWidth: "auto" }}>{Locale.label("common.rename") || "Rename"}</Button>
+            </Stack>
           </TableCell>
         </TableRow>
       );
@@ -139,7 +136,7 @@ export const BlocksPage = () => {
     );
   };
 
-  if (redirectUrl !== "") return <Navigate to={redirectUrl}></Navigate>;
+  if (!UserHelper.checkAccess(Permissions.contentApi.content.edit)) return <PermissionDenied permissions={[Permissions.contentApi.content.edit]} />;
 
   if (loading) {
     return (

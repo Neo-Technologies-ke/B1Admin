@@ -155,3 +155,4 @@ init-databases.sql
 # Backup files (DO NOT COMMIT)
 *.backup-*
 *.bak
+.auth-state.json

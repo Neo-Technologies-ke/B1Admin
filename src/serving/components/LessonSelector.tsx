@@ -11,9 +11,11 @@ import {
   CircularProgress,
   IconButton,
   Breadcrumbs,
-  Link
+  Link,
+  TextField,
+  InputAdornment
 } from "@mui/material";
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import { ArrowBack as ArrowBackIcon, Search as SearchIcon } from "@mui/icons-material";
 import { ProviderChipSelector } from "./ProviderChipSelector";
 import { BrowseGrid } from "./BrowseGrid";
 import { Locale } from "@churchapps/apphelper";
@@ -23,7 +25,7 @@ import { useProviderBrowser } from "../hooks/useProviderBrowser";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSelect: (contentId: string, contentName?: string, contentPath?: string, providerId?: string) => void;
+  onSelect: (contentId: string, contentName?: string, contentPath?: string, providerId?: string, lessonName?: string) => void;
   returnVenueName?: boolean;
   ministryId?: string;
   defaultProviderId?: string;
@@ -38,6 +40,8 @@ interface Props {
 export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, returnVenueName, ministryId, defaultProviderId, initialNavigationPath, initialProviderId, previousVenueName }) => {
   const browser = useProviderBrowser({ ministryId, defaultProviderId });
 
+  // Search filter
+  const [searchText, setSearchText] = useState("");
   // Selected folder (final selection) - unique to LessonSelector
   const [selectedFolder, setSelectedFolder] = useState<ContentFolder | null>(null);
   // When set, auto-select the first leaf folder matching this name
@@ -49,6 +53,7 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
       setSelectedFolder(folder);
     } else {
       setSelectedFolder(null);
+      setSearchText("");
       browser.navigateToFolder(folder);
     }
   }, [browser]);
@@ -56,6 +61,7 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
   // Handle back navigation
   const handleBack = useCallback(() => {
     setSelectedFolder(null);
+    setSearchText("");
     browser.navigateBack();
   }, [browser]);
 
@@ -63,14 +69,16 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
   const handleSelect = useCallback(() => {
     if (selectedFolder) {
       const folderName = returnVenueName ? selectedFolder.title : undefined;
-      onSelect(selectedFolder.id, folderName, selectedFolder.path, browser.selectedProviderId);
+      const lessonName = browser.breadcrumbItems.length > 0 ? browser.breadcrumbItems[browser.breadcrumbItems.length - 1].label : undefined;
+      onSelect(selectedFolder.id, folderName, selectedFolder.path, browser.selectedProviderId, lessonName);
       onClose();
     }
-  }, [selectedFolder, returnVenueName, onSelect, onClose, browser.selectedProviderId]);
+  }, [selectedFolder, returnVenueName, onSelect, onClose, browser.selectedProviderId, browser.breadcrumbItems]);
 
   // Handle provider change
   const handleProviderChange = useCallback((providerId: string) => {
     setSelectedFolder(null);
+    setSearchText("");
     browser.changeProvider(providerId);
   }, [browser]);
 
@@ -78,6 +86,7 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
   const handleClose = useCallback(() => {
     setSelectedFolder(null);
     setAutoSelectVenueName(null);
+    setSearchText("");
     browser.reset();
     onClose();
   }, [onClose, browser]);
@@ -173,6 +182,17 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
             ))}
           </Breadcrumbs>
 
+          {/* Search filter */}
+          {browser.currentItems.length > 0 && (
+            <TextField
+              size="small"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }}
+            />
+          )}
+
           {/* Content grid */}
           {!browser.isCurrentProviderLinked && browser.currentProviderInfo?.requiresAuth ? (
             <Box sx={{ textAlign: "center", py: 4 }}>
@@ -190,7 +210,7 @@ export const LessonSelector: React.FC<Props> = ({ open, onClose, onSelect, retur
             </Box>
           ) : (
             <BrowseGrid
-              folders={browser.currentItems}
+              folders={searchText ? browser.currentItems.filter(f => f.title.toLowerCase().includes(searchText.toLowerCase())) : browser.currentItems}
               selectedProviderId={browser.selectedProviderId}
               selectedFolderId={selectedFolder?.id}
               isLeafFolder={browser.isLeafFolder}
