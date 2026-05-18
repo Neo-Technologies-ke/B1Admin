@@ -25,7 +25,7 @@ try {
   const originalB1Block = 'url: `${CommonEnvironmentHelper.B1Root.replace("{key}", props.currentUserChurch.church.subDomain)}/login?jwt=${jwt}&churchId=${churchId}`, selected: props.appName === "B1.church", external: true, label: "B1.Church"';
   const originalLessonsBlock = 'url: `${CommonEnvironmentHelper.LessonsRoot}/login?jwt=${jwt}&churchId=${churchId}`, selected: props.appName === "Lessons.church", external: true, label: "Lessons.church"';
 
-  const patchedB1Block = `url: \`${portalUrl}/login?jwt=\${jwt}&churchId=\${churchId}\`, selected: props.appName === "Portal", external: true, label: "Portal"`;
+  const patchedB1Block = `url: \`${portalUrl}/\${props.currentUserChurch.church.subDomain}/login?jwt=\${jwt}&churchId=\${churchId}\`, selected: props.appName === "Portal", external: true, label: "Portal"`;
   const patchedLessonsBlock = `url: \`${lessonsUrl}/login?jwt=\${jwt}&churchId=\${churchId}\`, selected: props.appName === "Lessons", external: true, label: "Lessons"`;
 
   if (content.includes(patchedB1Block) && content.includes(patchedLessonsBlock)) {
