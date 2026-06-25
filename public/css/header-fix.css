@@ -1,53 +1,24 @@
-/* Fix for header layout issues after upstream merge */
+/* Header layout fix - prevent text overlay */
 
-/* Ensure proper header alignment */
-#root > div > header {
-  display: flex;
-  align-items: center;
-  min-height: 64px;
+/* Ensure proper spacing for app bar */
+#appBarSpacer {
+  height: 64px;
+  margin-bottom: 0;
 }
 
-/* Fix primary navigation button alignment */
-#primaryNavButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Fix header to prevent overlay */
+header.MuiAppBar-root {
+  z-index: 1100;
 }
 
-/* Fix logo alignment */
-#primaryNavButton img {
-  max-height: 40px;
-  width: auto;
+/* Ensure content doesn't overlap with header */
+#root > div {
+  padding-top: 0;
 }
 
-/* Fix secondary menu alignment */
-#secondaryMenu {
-  display: flex;
-  align-items: center;
-}
-
-/* Fix user menu alignment */
-#userMenuButton {
-  display: flex;
-  align-items: center;
-}
-
-/* Ensure app bar content is properly aligned */
-.MuiToolbar-root {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 64px !important;
-}
-
-/* Fix any flex issues in the header */
-header .MuiBox-root {
-  display: flex;
-  align-items: center;
-}
-
-/* Ensure proper spacing for header elements */
-#primaryNavButton h2 {
-  margin: 0;
-  line-height: 1;
+/* Fix for mobile responsive header */
+@media (max-width: 740px) {
+  #appBarSpacer {
+    height: 60px;
+  }
 }
