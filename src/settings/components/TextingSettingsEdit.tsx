@@ -14,6 +14,7 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
   const [provider, setProvider] = React.useState("");
   const [apiKey, setApiKey] = React.useState("");
   const [apiSecret, setApiSecret] = React.useState("");
+  const [username, setUsername] = React.useState("");
   const [errors, setErrors] = React.useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | SelectChangeEvent) => {
@@ -22,6 +23,7 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
       case "provider": setProvider(e.target.value); break;
       case "apiKey": setApiKey(e.target.value); break;
       case "apiSecret": setApiSecret(e.target.value); break;
+      case "username": setUsername(e.target.value); break;
     }
   };
 
@@ -32,6 +34,18 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
         <Grid size={{ xs: 12, md: 6 }}>
           <TextField fullWidth name="apiKey" label={Locale.label("settings.textingSettingsEdit.apiKey")} value={apiKey} onChange={handleChange} type="password" />
         </Grid>
+      );
+    }
+    if (provider === "AfricasTalking") {
+      return (
+        <>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth name="apiKey" label={Locale.label("settings.textingSettingsEdit.apiKey")} value={apiKey} onChange={handleChange} type="password" />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth name="username" label={Locale.label("settings.textingSettingsEdit.atUsername")} value={username} onChange={handleChange} helperText={Locale.label("settings.textingSettingsEdit.atUsernameHelpertext")} />
+          </Grid>
+        </>
       );
     }
     // Default: show both key and secret (for future providers like Twilio)
@@ -56,6 +70,7 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
         tp.provider = provider;
         if (apiKey !== "" && apiKey !== "********") tp.apiKey = apiKey;
         if (apiSecret !== "" && apiSecret !== "********") tp.apiSecret = apiSecret;
+        if (username !== "" && username !== "********") tp.username = username;
         tp.enabled = true;
         await ApiHelper.post("/texting/providers", [tp], "MessagingApi");
       }
@@ -85,11 +100,13 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
       setProvider("");
       setApiKey("");
       setApiSecret("");
+      setUsername("");
     } else {
       setTextingProvider(providers[0]);
       setProvider(providers[0].provider || "");
       setApiKey(providers[0].apiKey || "");
       setApiSecret(providers[0].apiSecret || "");
+      setUsername(providers[0].username || "");
     }
   };
 
@@ -108,6 +125,7 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
             <Select name="provider" label={Locale.label("settings.textingSettingsEdit.provider")} value={provider || ""} onChange={handleChange}>
               <MenuItem value="">{Locale.label("settings.textingSettingsEdit.none")}</MenuItem>
               <MenuItem value="Clearstream">{Locale.label("settings.textingSettingsEdit.clearstream")}</MenuItem>
+              <MenuItem value="AfricasTalking">{Locale.label("settings.textingSettingsEdit.africasTalking")}</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -122,6 +140,13 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
           <Grid size={{ xs: 12 }}>
             <Typography variant="body2" color="textSecondary" component="div">
               {Locale.label("settings.textingSettingsEdit.textInChurchHelper")} <a href="https://textinchurch.com/support" target="_blank" rel="noopener noreferrer">{Locale.label("settings.textingSettingsEdit.textInChurchHelperLink")}</a> {Locale.label("settings.textingSettingsEdit.textInChurchHelperSuffix")}
+            </Typography>
+          </Grid>
+        )}
+        {provider === "AfricasTalking" && (
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="body2" color="textSecondary" component="div">
+              {Locale.label("settings.textingSettingsEdit.africasTalkingHelper")} <a href="https://account.africastalking.com/apps/sandbox/settings/key" target="_blank" rel="noopener noreferrer">{Locale.label("settings.textingSettingsEdit.africasTalkingHelperLink")}</a>. {Locale.label("settings.textingSettingsEdit.africasTalkingHelperSuffix")}
             </Typography>
           </Grid>
         )}
