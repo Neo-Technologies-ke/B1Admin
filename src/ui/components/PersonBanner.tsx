@@ -9,7 +9,7 @@ export const PersonBanner: React.FC = () => {
         <Grid size={{ xs: 12, md: 1 }} sx={{ display: "flex", justifyContent: { xs: "center", sm: "flex-start" } }}>
           <Box
             component="img"
-            src="https://content.churchapps.org/Hchi650pfrH/membership/people/rNW0TQFFJ00.png?dt=1654567191000"
+            src="https://lifereformationcentre.org/images/demo/person.png"
             alt="Jeremy Zongker"
             sx={{
               width: 100,
