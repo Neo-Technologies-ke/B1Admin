@@ -42,11 +42,11 @@ ENV REACT_APP_LESSONS_URL=$REACT_APP_LESSONS_URL
 ENV REACT_APP_GOOGLE_ANALYTICS=$REACT_APP_GOOGLE_ANALYTICS
 
 # Copy package files and scripts for postinstall
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY scripts ./scripts
 
 # Install dependencies (postinstall runs patch-apphelper.cjs with env vars already set)
-RUN npm ci --silent --legacy-peer-deps
+RUN corepack enable && YARN_ENABLE_SCRIPTS=true yarn install --immutable
 
 # Force local API domains in bundled dependency defaults
 RUN find node_modules/@churchapps -type f -name "*.js" -exec sed -i \
@@ -67,7 +67,7 @@ RUN find node_modules/@churchapps -type f -name "*.js" -exec sed -i \
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN yarn build
 
 # Patch compiled JavaScript to replace B1.Church and Lessons.church labels and URLs
 RUN PORTAL_URL=${REACT_APP_B1_WEBSITE_URL:-https://portal.lifereformationcentre.org} && \
