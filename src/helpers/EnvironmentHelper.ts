@@ -14,7 +14,11 @@ export class EnvironmentHelper {
     switch (stage) {
       case "demo": EnvironmentHelper.initDemo(); break;
       case "staging": EnvironmentHelper.initStaging(); break;
-      case "prod": EnvironmentHelper.initProd(); break;
+      case "prod": 
+        // For production, use initDev() which sets relative /api paths
+        // This allows nginx to proxy to our local API
+        EnvironmentHelper.initDev();
+        break;
       default: EnvironmentHelper.initDev(); break;
     }
     EnvironmentHelper.Common.init(stage);
@@ -42,9 +46,23 @@ export class EnvironmentHelper {
   static initLocal = async () => { };
 
   static initDev = () => {
-    this.initStaging();
-    EnvironmentHelper.LessonsApi = process.env.REACT_APP_LESSONS_API || EnvironmentHelper.LessonsApi;
-    EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || EnvironmentHelper.B1Url;
+    // Set all API URLs directly - do NOT call initStaging() as it sets ChurchApps URLs
+    EnvironmentHelper.Common.AttendanceApi = process.env.REACT_APP_ATTENDANCE_API || "/api/attendance";
+    EnvironmentHelper.Common.DoingApi = process.env.REACT_APP_DOING_API || "/api/doing";
+    EnvironmentHelper.Common.GivingApi = process.env.REACT_APP_GIVING_API || "/api/giving";
+    EnvironmentHelper.Common.MembershipApi = process.env.REACT_APP_MEMBERSHIP_API || "/api/membership";
+    EnvironmentHelper.Common.ReportingApi = process.env.REACT_APP_REPORTING_API || "/api/reporting";
+    EnvironmentHelper.Common.MessagingApi = process.env.REACT_APP_MESSAGING_API || "/api/messaging";
+    EnvironmentHelper.Common.MessagingApiSocket = process.env.REACT_APP_MESSAGING_API_SOCKET || "wss://admin.lifereformationcentre.org/ws";
+    EnvironmentHelper.Common.ContentApi = process.env.REACT_APP_CONTENT_API || "/api/content";
+    EnvironmentHelper.Common.AskApi = process.env.REACT_APP_ASK_API || "/api/ask";
+    EnvironmentHelper.Common.GoogleAnalyticsTag = process.env.REACT_APP_GOOGLE_ANALYTICS || "G-47N4XQJQJ5";
+    EnvironmentHelper.Common.ContentRoot = process.env.REACT_APP_CONTENT_ROOT || "/api/content";
+    EnvironmentHelper.Common.B1Root = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
+    EnvironmentHelper.Common.B1AdminRoot = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
+    EnvironmentHelper.Common.LessonsRoot = "https://lessons.church";
+    EnvironmentHelper.LessonsApi = process.env.REACT_APP_LESSONS_API || "https://api.lessons.church";
+    EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || "https://admin.lifereformationcentre.org";
   };
 
   //NOTE: None of these values are secret.
@@ -55,14 +73,14 @@ export class EnvironmentHelper {
 
   //NOTE: None of these values are secret.
   static initStaging = () => {
-    EnvironmentHelper.LessonsApi = "https://api.staging.lessons.church";
-    EnvironmentHelper.B1Url = "https://{subdomain}.staging.b1.church";
+    EnvironmentHelper.LessonsApi = "https://api.lifereformationcentre.org/lessons";
+    EnvironmentHelper.B1Url = "https://{subdomain}.lifereformationcentre.org";
   };
 
   //NOTE: None of these values are secret.
   static initProd = () => {
     EnvironmentHelper.Common.GoogleAnalyticsTag = "G-47N4XQJQJ5";
     EnvironmentHelper.LessonsApi = "https://api.lessons.church";
-    EnvironmentHelper.B1Url = "https://{subdomain}.b1.church";
+    EnvironmentHelper.B1Url = process.env.REACT_APP_B1_WEBSITE_URL || "https://{subdomain}.lifereformationcentre.org";
   };
 }
