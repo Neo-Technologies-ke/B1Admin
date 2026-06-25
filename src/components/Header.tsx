@@ -172,6 +172,7 @@ export const Header: React.FC = () => {
   }, [primaryMenu, secondaryMenu]);
 
   /*<Typography variant="h6" noWrap>{UserHelper.currentUserChurch?.church?.name || ""}</Typography>*/
+
   return (
     <SiteHeader
       primaryMenuItems={primaryMenu}
