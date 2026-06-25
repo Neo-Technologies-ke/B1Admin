@@ -1,0 +1,53 @@
+/* Fix for header layout issues after upstream merge */
+
+/* Ensure proper header alignment */
+#root > div > header {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+
+/* Fix primary navigation button alignment */
+#primaryNavButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Fix logo alignment */
+#primaryNavButton img {
+  max-height: 40px;
+  width: auto;
+}
+
+/* Fix secondary menu alignment */
+#secondaryMenu {
+  display: flex;
+  align-items: center;
+}
+
+/* Fix user menu alignment */
+#userMenuButton {
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure app bar content is properly aligned */
+.MuiToolbar-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px !important;
+}
+
+/* Fix any flex issues in the header */
+header .MuiBox-root {
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure proper spacing for header elements */
+#primaryNavButton h2 {
+  margin: 0;
+  line-height: 1;
+}
