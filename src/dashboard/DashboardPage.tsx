@@ -16,7 +16,7 @@ export const DashboardPage = () => {
 
   const canViewPeople = UserHelper.checkAccess(Permissions.membershipApi.people.view);
 
-  const churchName = UserHelper.currentUserChurch?.church?.name || Locale.label("dashboard.memberWelcome.fallbackChurchName");
+  const churchName = UserHelper.currentUserChurch?.church?.name || "Life Reformation Centre" || Locale.label("dashboard.memberWelcome.fallbackChurchName");
   const headerTitle = isDomainAdmin
     ? Locale.label("dashboard.adminWelcome.title")
     : Locale.label("dashboard.memberWelcome.title").replace("{churchName}", churchName);
