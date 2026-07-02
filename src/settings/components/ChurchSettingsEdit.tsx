@@ -16,6 +16,8 @@ import { TextingSettingsEdit } from "./TextingSettingsEdit";
 import { SupportContactSettingsEdit } from "./SupportContactSettingsEdit";
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
 import { ChurchBrandingEdit } from "./ChurchBrandingEdit";
+import { VisbilityPrefSettingsEdit } from "./VisibilityPrefSettingsEdit";
+import PeopleIcon from "@mui/icons-material/People";
 
 // ChurchInterface has typed fields; RHF nested paths require looser typing
 type AnyRecord = Record<string, any>;
@@ -199,6 +201,18 @@ export const ChurchSettingsEdit: React.FC<Props> = (props) => {
           </AccordionSummary>
           <AccordionDetails sx={{ pt: 2 }}>
             <TextingSettingsEdit churchId={props.church?.id || ""} saveTrigger={saveTrigger} onError={handleTextingError} />
+          </AccordionDetails>
+        </Accordion>
+      )}
+
+      {/* People & Privacy Accordion */}
+      {UserHelper.checkAccess(Permissions.membershipApi.settings.edit) && (
+        <Accordion expanded={expanded === "privacy"} onChange={handleAccordionChange("privacy")} sx={accordionStyles}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={accordionSummaryStyles}>
+            <SettingsSectionHeader icon={<PeopleIcon />} color="primary" title="People & Privacy" subtitle="Control what member contact information is visible to others" />
+          </AccordionSummary>
+          <AccordionDetails sx={{ pt: 2 }}>
+            <VisbilityPrefSettingsEdit churchId={props.church?.id || ""} saveTrigger={saveTrigger} />
           </AccordionDetails>
         </Accordion>
       )}
