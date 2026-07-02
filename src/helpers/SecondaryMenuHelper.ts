@@ -28,10 +28,12 @@ export class SecondaryMenuHelper {
     let label: string = "";
     menuItems.push({ url: "/people", label: Locale.label("components.wrapper.ppl"), icon: "person" });
     menuItems.push({ url: "/groups", label: Locale.label("components.wrapper.groups"), icon: "groups" });
+    if (UserHelper.checkAccess(Permissions.membershipApi.groups.edit) || UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit)) menuItems.push({ url: "/groups/reports", label: "Group Reports", icon: "article" });
     if (UserHelper.checkAccess(Permissions.attendanceApi.attendance.viewSummary)) menuItems.push({ url: "/attendance", label: Locale.label("components.wrapper.att"), icon: "calendar_month" });
     if (data?.formPermission) menuItems.push({ url: "/forms", label: Locale.label("components.wrapper.forms"), icon: "description" });
 
-    if (path.startsWith("/groups") && data?.search?.includes("tag=team")) label = Locale.label("components.wrapper.teams");
+    if (path.startsWith("/groups/reports")) label = "Group Reports";
+    else if (path.startsWith("/groups") && data?.search?.includes("tag=team")) label = Locale.label("components.wrapper.teams");
     else if (path.startsWith("/groups")) label = Locale.label("components.wrapper.groups");
     else if (path.startsWith("/people/demographics")) label = Locale.label("people.demographics.title");
     else if (path.startsWith("/people")) label = Locale.label("components.wrapper.ppl");
