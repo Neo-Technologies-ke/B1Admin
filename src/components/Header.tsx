@@ -180,7 +180,7 @@ export const Header: React.FC = () => {
       secondaryMenuItems={secondaryMenu.menuItems}
       secondaryMenuLabel={secondaryMenu.label}
       context={context}
-      appName={"B1Admin"}
+      appName={"Life Reformation Centre"}
       onNavigate={handleNavigate}
     />
   );
