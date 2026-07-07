@@ -57,6 +57,7 @@ export class EnvironmentHelper {
   static initStaging = () => {
     EnvironmentHelper.LessonsApi = "https://api.staging.lessons.church";
     EnvironmentHelper.B1Url = "https://{subdomain}.staging.b1.church";
+    if (process.env.REACT_APP_PORTAL_URL) EnvironmentHelper.B1Url = process.env.REACT_APP_PORTAL_URL;
   };
 
   //NOTE: None of these values are secret.
@@ -64,5 +65,6 @@ export class EnvironmentHelper {
     EnvironmentHelper.Common.GoogleAnalyticsTag = "G-47N4XQJQJ5";
     EnvironmentHelper.LessonsApi = "https://api.lessons.church";
     EnvironmentHelper.B1Url = "https://{subdomain}.b1.church";
+    if (process.env.REACT_APP_PORTAL_URL) EnvironmentHelper.B1Url = process.env.REACT_APP_PORTAL_URL;
   };
 }

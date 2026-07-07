@@ -64,7 +64,7 @@ export const Login: React.FC = () => {
           context={context}
           jwt={jwt}
           appName="Life Reformation Centre"
-          appUrl={window.location.href}
+          appUrl={process.env.REACT_APP_PORTAL_URL || window.location.href}
           callbackErrors={errors}
           returnUrl={returnUrl}
           handleRedirect={handleRedirect}
