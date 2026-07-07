@@ -31,9 +31,14 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
     if (provider === "") return null;
     if (provider === "AfricasTalking") {
       return (
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField fullWidth name="apiKey" label={Locale.label("settings.textingSettingsEdit.apiKey")} value={apiKey} onChange={handleChange} type="password" />
-        </Grid>
+        <>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth name="username" label={Locale.label("settings.textingSettingsEdit.username")} value={username} onChange={handleChange} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth name="apiKey" label={Locale.label("settings.textingSettingsEdit.apiKey")} value={apiKey} onChange={handleChange} type="password" />
+          </Grid>
+        </>
       );
     }
     // Default: show both key and secret (for future providers like Twilio)
@@ -112,7 +117,9 @@ export const TextingSettingsEdit: React.FC<Props> = (props) => {
             <InputLabel>{Locale.label("settings.textingSettingsEdit.provider")}</InputLabel>
             <Select name="provider" label={Locale.label("settings.textingSettingsEdit.provider")} value={provider || ""} onChange={handleChange}>
               <MenuItem value="">{Locale.label("settings.textingSettingsEdit.none")}</MenuItem>
+              <MenuItem value="AfricasTalking">{Locale.label("settings.textingSettingsEdit.africasTalking")}</MenuItem>
               <MenuItem value="Clearstream">{Locale.label("settings.textingSettingsEdit.clearstream")}</MenuItem>
+              <MenuItem value="TextInChurch">{Locale.label("settings.textingSettingsEdit.textInChurch")}</MenuItem>
             </Select>
           </FormControl>
         </Grid>
