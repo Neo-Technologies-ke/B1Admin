@@ -358,7 +358,7 @@ export const PeoplePage = memo(() => {
             ? isSearchPerformed
               ? Locale.label("people.peoplePage.peopleFound").replace("{count}", searchResults.length.toString())
               : Locale.label("people.peoplePage.showingMembers").replace("{count}", searchResults.length.toString())
-            : peopleQuery.isLoading
+            : isFetchingPeople
               ? Locale.label("people.peoplePage.loading")
               : Locale.label("people.peoplePage.noPeopleFound")
         }>
@@ -474,7 +474,7 @@ export const PeoplePage = memo(() => {
                 />
                 {!isSearchPerformed && !loadAll && maybeMore && allPeople.length > 0 && (
                   <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                    <Button variant="outlined" onClick={handleShowAll} disabled={peopleQuery.isFetching} startIcon={peopleQuery.isFetching ? <CircularProgress size={16} /> : null}>
+                    <Button variant="outlined" onClick={handleShowAll} disabled={isFetchingPeople} startIcon={isFetchingPeople ? <CircularProgress size={16} /> : null}>
                       {Locale.label("people.peoplePage.showAll")}
                     </Button>
                   </Box>
