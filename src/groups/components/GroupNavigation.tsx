@@ -27,7 +27,7 @@ export const GroupNavigation = memo((props: Props) => {
       if (UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view)) {
         baseTabs.push({ value: "health", label: Locale.label("groups.groupNavigation.health"), icon: <HealthIcon /> });
       }
-      baseTabs.push({ value: "reports", label: "Reports", icon: <ReportIcon /> });
+      baseTabs.push({ value: "reports", label: Locale.label("groups.groupReportsPage.title"), icon: <ReportIcon /> });
     }
 
     return baseTabs;

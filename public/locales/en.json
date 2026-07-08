@@ -346,6 +346,7 @@
       }
     },
     "custom": "Custom",
+    "date": "Date",
     "delete": "Delete",
     "done": "Done",
     "duplicate": "Duplicate",
@@ -403,6 +404,7 @@
     "tryAgain": "Try Again",
     "update": "Update",
     "website": "Website",
+    "unknown": "Unknown",
     "yes": "Yes"
   },
   "components": {
@@ -1208,6 +1210,28 @@
       "health": "Health",
       "members": "Members",
       "sessions": "Sessions"
+    },
+    "groupReportsPage": {
+      "title": "Group Reports",
+      "subtitle": "Written reports submitted by group leaders",
+      "totalUnread": "{total} total · {unread} unread",
+      "filterLabel": "Filter by Group",
+      "allGroups": "All Groups",
+      "emptyAll": "No group reports have been submitted yet.",
+      "emptyFiltered": "No reports for this group.",
+      "statusRead": "Read",
+      "statusUnread": "Unread",
+      "group": "Group",
+      "leader": "Leader",
+      "unknownGroup": "Unknown group"
+    },
+    "groupReportsTab": {
+      "writeReport": "Write Report",
+      "writeFirstReport": "Write First Report",
+      "editReport": "Edit Report",
+      "writeGroupReport": "Write Group Report",
+      "submitReport": "Submit Report",
+      "deleteConfirm": "Are you sure you want to delete this report?"
     },
     "groupPage": {
       "addPpl": "Add Person"

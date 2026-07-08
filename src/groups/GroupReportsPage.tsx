@@ -5,8 +5,7 @@ import {
   InputLabel, MenuItem, Select, Stack, Typography
 } from "@mui/material";
 import { Article as ReportIcon } from "@mui/icons-material";
-import { PageHeader } from "@churchapps/apphelper";
-import { ApiHelper } from "@churchapps/apphelper";
+import { PageHeader, Locale, ApiHelper } from "@churchapps/apphelper";
 
 interface GroupReport {
   id?: string;
@@ -31,14 +30,14 @@ export const GroupReportsPage = () => {
   const [filterGroup, setFilterGroup] = React.useState<string>("all");
 
   const reports = useQuery<GroupReport[]>({
-    queryKey: ["/membership/groupReports", "MembershipApi"]
+    queryKey: ["/groupReports", "MembershipApi"]
   });
 
   const markReadMutation = useMutation({
     mutationFn: (report: GroupReport) =>
-      ApiHelper.post("/membership/groupReports", { ...report, status: "read" }, "MembershipApi"),
+      ApiHelper.post("/groupReports", { ...report, status: "read" }, "MembershipApi"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/membership/groupReports", "MembershipApi"] });
+      queryClient.invalidateQueries({ queryKey: ["/groupReports", "MembershipApi"] });
     }
   });
 
@@ -62,22 +61,22 @@ export const GroupReportsPage = () => {
 
   return (
     <>
-      <PageHeader title="Group Reports" subtitle="Written reports submitted by group leaders" />
+      <PageHeader title={Locale.label("groups.groupReportsPage.title")} subtitle={Locale.label("groups.groupReportsPage.subtitle")} />
 
       <Box sx={{ px: 3, py: 2 }}>
         <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={2} sx={{ mb: 3 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <ReportIcon color="action" />
             <Typography variant="body2" color="text.secondary">
-              {reportList.length} total &middot; <strong>{unreadCount}</strong> unread
+              {Locale.label("groups.groupReportsPage.totalUnread").replace("{total}", reportList.length.toString()).replace("{unread}", unreadCount.toString())}
             </Typography>
           </Stack>
 
           {groups.length > 0 && (
             <FormControl size="small" sx={{ minWidth: 200 }}>
-              <InputLabel>Filter by Group</InputLabel>
-              <Select value={filterGroup} label="Filter by Group" onChange={(e) => setFilterGroup(e.target.value)}>
-                <MenuItem value="all">All Groups</MenuItem>
+              <InputLabel>{Locale.label("groups.groupReportsPage.filterLabel")}</InputLabel>
+              <Select value={filterGroup} label={Locale.label("groups.groupReportsPage.filterLabel")} onChange={(e) => setFilterGroup(e.target.value)}>
+                <MenuItem value="all">{Locale.label("groups.groupReportsPage.allGroups")}</MenuItem>
                 {groups.map((g) => (
                   <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
                 ))}
@@ -91,7 +90,7 @@ export const GroupReportsPage = () => {
             <CardContent sx={{ textAlign: "center", py: 6 }}>
               <ReportIcon sx={{ fontSize: 56, color: "text.disabled", mb: 1 }} />
               <Typography color="text.secondary">
-                {filterGroup === "all" ? "No group reports have been submitted yet." : "No reports for this group."}
+                {filterGroup === "all" ? Locale.label("groups.groupReportsPage.emptyAll") : Locale.label("groups.groupReportsPage.emptyFiltered")}
               </Typography>
             </CardContent>
           </Card>
@@ -109,19 +108,19 @@ export const GroupReportsPage = () => {
                 title={
                   <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{r.title}</Typography>
-                    <Chip label={r.status === "read" ? "Read" : "Unread"} size="small" color={statusColor(r.status)} />
+                    <Chip label={r.status === "read" ? Locale.label("groups.groupReportsPage.statusRead") : Locale.label("groups.groupReportsPage.statusUnread")} size="small" color={statusColor(r.status)} />
                   </Stack>
                 }
                 subheader={
                   <Stack direction="row" spacing={2} sx={{ mt: 0.5 }} flexWrap="wrap">
                     <Typography variant="caption" color="text.secondary">
-                      <strong>Group:</strong> {r.group?.name || "Unknown group"}
+                      <strong>{Locale.label("groups.groupReportsPage.group")}:</strong> {r.group?.name || Locale.label("groups.groupReportsPage.unknownGroup")}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      <strong>Leader:</strong> {r.person?.displayName || "Unknown"}
+                      <strong>{Locale.label("groups.groupReportsPage.leader")}:</strong> {r.person?.displayName || Locale.label("common.unknown")}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      <strong>Date:</strong> {r.reportDate ? new Date(r.reportDate).toLocaleDateString() : "—"}
+                      <strong>{Locale.label("common.date")}:</strong> {r.reportDate ? new Date(r.reportDate).toLocaleDateString() : "—"}
                     </Typography>
                   </Stack>
                 }

@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon, Article as ReportIcon } from "@mui/icons-material";
 import { type GroupInterface } from "@churchapps/helpers";
-import { ApiHelper, UserHelper, Permissions } from "@churchapps/apphelper";
+import { ApiHelper, UserHelper, Permissions, Locale } from "@churchapps/apphelper";
 
 interface GroupReport {
   id?: string;
@@ -83,7 +83,7 @@ export const GroupReportsTab = ({ group }: Props) => {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Delete this report?")) deleteMutation.mutate(id);
+    if (window.confirm(Locale.label("groups.groupReportsTab.deleteConfirm"))) deleteMutation.mutate(id);
   };
 
   const reportList: GroupReport[] = (reports.data as any) || [];
@@ -91,10 +91,10 @@ export const GroupReportsTab = ({ group }: Props) => {
   return (
     <Box sx={{ p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>Group Reports</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>{Locale.label("groups.groupReportsPage.title")}</Typography>
         {canEdit && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => handleOpen()}>
-            Write Report
+            {Locale.label("groups.groupReportsTab.writeReport")}
           </Button>
         )}
       </Stack>
@@ -103,10 +103,10 @@ export const GroupReportsTab = ({ group }: Props) => {
         <Card variant="outlined">
           <CardContent sx={{ textAlign: "center", py: 4 }}>
             <ReportIcon sx={{ fontSize: 48, color: "text.disabled", mb: 1 }} />
-            <Typography color="text.secondary">No reports submitted yet.</Typography>
+            <Typography color="text.secondary">{Locale.label("groups.groupReportsPage.emptyAll")}</Typography>
             {canEdit && (
               <Button sx={{ mt: 2 }} variant="outlined" size="small" startIcon={<AddIcon />} onClick={() => handleOpen()}>
-                Write First Report
+                {Locale.label("groups.groupReportsTab.writeFirstReport")}
               </Button>
             )}
           </CardContent>
@@ -150,7 +150,7 @@ export const GroupReportsTab = ({ group }: Props) => {
       </Stack>
 
       <Dialog open={dialogOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editing ? "Edit Report" : "Write Group Report"}</DialogTitle>
+        <DialogTitle>{editing ? Locale.label("groups.groupReportsTab.editReport") : Locale.label("groups.groupReportsTab.writeGroupReport")}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
@@ -182,7 +182,7 @@ export const GroupReportsTab = ({ group }: Props) => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button variant="contained" onClick={handleSave} disabled={!form.title || !form.content || saveMutation.isPending}>
-            {saveMutation.isPending ? "Saving..." : "Submit Report"}
+            {saveMutation.isPending ? Locale.label("common.saving") : Locale.label("groups.groupReportsTab.submitReport")}
           </Button>
         </DialogActions>
       </Dialog>
