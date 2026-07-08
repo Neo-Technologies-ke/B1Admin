@@ -131,45 +131,7 @@ export const GlobalThemeStyles: React.FC = () => {
 
     styleElement.textContent = css;
 
-    // Replace the B1 logo img inside the primary nav button with the church logo.
-    // Always use the local /images/logo-icon.png (already replaced with LRC logo)
-    // so it works regardless of external API availability or CORS.
-    const LOCAL_LOGO = "/images/logo-icon.png";
-    const patchImg = (img: HTMLImageElement) => {
-      img.src = LOCAL_LOGO;
-      img.alt = "Church Logo";
-      img.style.height = "36px";
-      img.style.width = "auto";
-      img.style.maxWidth = "36px";
-      img.style.objectFit = "contain";
-      img.style.display = "block";
-    };
-
-    const replaceHeaderLogo = () => {
-      const navBtn = document.getElementById("primaryNavButton");
-      if (!navBtn) return;
-      const img = navBtn.querySelector("img") as HTMLImageElement | null;
-      if (img && !img.getAttribute("data-lrc-patched")) {
-        img.setAttribute("data-lrc-patched", "1");
-        patchImg(img);
-      }
-    };
-
-    replaceHeaderLogo();
-    const t1 = setTimeout(replaceHeaderLogo, 200);
-    const t2 = setTimeout(replaceHeaderLogo, 800);
-    const t3 = setTimeout(replaceHeaderLogo, 2000);
-
-    // Watch for the nav button being added to the DOM after initial render
-    const observer = new MutationObserver(() => replaceHeaderLogo());
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      observer.disconnect();
-    };
+    // Logo patching is handled in Header.tsx which has the correct lifecycle timing.
   }, [colors, logoUrl]);
 
   return null;

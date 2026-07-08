@@ -158,15 +158,30 @@ export const Header: React.FC = () => {
       });
     };
 
+    const patchLogo = () => {
+      const navBtn = document.getElementById("primaryNavButton");
+      if (!navBtn) return;
+      const img = navBtn.querySelector("img") as HTMLImageElement | null;
+      if (img && img.src !== window.location.origin + "/images/logo-icon.png") {
+        img.src = "/images/logo-icon.png";
+        img.alt = "Life Reformation Centre";
+        img.style.cssText = "height:36px;width:auto;max-width:36px;object-fit:contain;display:block";
+      }
+    };
+
     // Add test IDs after a short delay to ensure DOM is ready
-    const timer = setTimeout(addTestIds, 100);
+    const timer = setTimeout(() => { addTestIds(); patchLogo(); }, 100);
+    const t2 = setTimeout(patchLogo, 500);
+    const t3 = setTimeout(patchLogo, 1500);
 
     // Also add test IDs when menu items change
-    const observer = new MutationObserver(addTestIds);
+    const observer = new MutationObserver(() => { addTestIds(); patchLogo(); });
     observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(t2);
+      clearTimeout(t3);
       observer.disconnect();
     };
   }, [primaryMenu, secondaryMenu]);
