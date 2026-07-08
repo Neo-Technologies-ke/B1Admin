@@ -81,7 +81,8 @@ RUN PORTAL_URL=${REACT_APP_B1_WEBSITE_URL:-https://portal.lifereformationcentre.
       -e "s#https://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
       -e "s#http://[^\"]*\.b1\.church#${PORTAL_URL}#g" \
       -e "s#https://lessons\.church#${LESSONS_URL}#g" \
-      -e "s#http://lessons\.church#${LESSONS_URL}#g" {} + && \
+      -e "s#http://lessons\.church#${LESSONS_URL}#g" \
+      -e 's#/images/logo-icon\.png#/images/lrc-logo.png#g' {} + && \
     find dist/assets -type f -name "*.js" -exec sed -i \
       -e "s#B1AdminRoot=\"${PORTAL_URL}\"#B1AdminRoot=\"${ADMIN_URL}\"#g" {} +
 

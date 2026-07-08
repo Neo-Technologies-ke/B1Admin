@@ -128,10 +128,6 @@ export const GlobalThemeStyles: React.FC = () => {
         border-radius: 12px !important;
       }
 
-      /* Hide the B1 R logo — our overlay img in Header.tsx covers it */
-      #primaryNavButton img {
-        visibility: hidden !important;
-      }
     `;
 
     styleElement.textContent = css;

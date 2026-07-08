@@ -174,32 +174,14 @@ export const Header: React.FC = () => {
   /*<Typography variant="h6" noWrap>{UserHelper.currentUserChurch?.church?.name || ""}</Typography>*/
 
   return (
-    <div style={{ position: "relative" }}>
-      <SiteHeader
-        primaryMenuItems={primaryMenu}
-        primaryMenuLabel={getPrimaryLabel()}
-        secondaryMenuItems={secondaryMenu.menuItems}
-        secondaryMenuLabel={secondaryMenu.label}
-        context={context}
-        appName={"Life Reformation Centre"}
-        onNavigate={handleNavigate}
-      />
-      {/* Overlay our logo directly on top of the B1 R icon — position matches #primaryNavButton img */}
-      <img
-        src="/images/logo-icon.png"
-        alt="Life Reformation Centre"
-        style={{
-          position: "absolute",
-          top: "14px",
-          left: "12px",
-          height: "36px",
-          width: "36px",
-          objectFit: "contain",
-          zIndex: 1400,
-          pointerEvents: "none",
-          borderRadius: "4px"
-        }}
-      />
-    </div>
+    <SiteHeader
+      primaryMenuItems={primaryMenu}
+      primaryMenuLabel={getPrimaryLabel()}
+      secondaryMenuItems={secondaryMenu.menuItems}
+      secondaryMenuLabel={secondaryMenu.label}
+      context={context}
+      appName={"Life Reformation Centre"}
+      onNavigate={handleNavigate}
+    />
   );
 };
