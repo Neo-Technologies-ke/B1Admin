@@ -155,7 +155,7 @@ export const PeoplePage = memo(() => {
 
   React.useEffect(() => {
     if (!churchId || !ApiHelper.isAuthenticated) return;
-    const url = loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`;
+    const url = loadAll ? "/people" : `/people?pageSize=${INITIAL_PAGE_SIZE}`;
     setIsFetchingPeople(true);
     ApiHelper.get(url, "MembershipApi").then((data: any) => {
       if (Array.isArray(data)) {
