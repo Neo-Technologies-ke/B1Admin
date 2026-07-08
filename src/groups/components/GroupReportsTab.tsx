@@ -34,7 +34,10 @@ const statusColor = (status: string): "default" | "warning" | "success" => {
 
 export const GroupReportsTab = ({ group }: Props) => {
   const queryClient = useQueryClient();
-  const canEdit = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit);
+  const canEditAll = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit);
+  // Check if user is a leader of this group
+  const isGroupLeader = UserHelper.userChurch?.groups?.some((g: any) => g.id === group?.id && g.leader);
+  const canEdit = canEditAll || isGroupLeader;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<GroupReport | null>(null);
@@ -42,7 +45,7 @@ export const GroupReportsTab = ({ group }: Props) => {
 
   const reports = useQuery<GroupReport[]>({
     queryKey: [`/groupReports?groupId=${group?.id}`, "MembershipApi"],
-    enabled: !!group?.id
+    enabled: !!group?.id && (canEditAll || isGroupLeader)
   });
 
   const saveMutation = useMutation({
