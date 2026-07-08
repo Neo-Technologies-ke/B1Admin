@@ -13,7 +13,7 @@ import { People as PeopleIcon, PersonAdd as PersonAddIcon, Print as PrintIcon, B
 import { PageHeader } from "@churchapps/apphelper";
 import { AppIconButton } from "../components/ui/AppIconButton";
 import { CountChip, ExportButton } from "../components/ui";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { AISearch } from "./components/AISearch";
 import { PeopleBulkActions } from "./components/bulk/PeopleBulkActions";
 import { type BulkResult } from "./components/bulk/BulkFieldDialog";
@@ -77,7 +77,6 @@ const formatHeader = (key: string): string => {
 };
 
 export const PeoplePage = memo(() => {
-  const churchId = UserHelper.currentUserChurch?.church?.id;
   const [searchResults, setSearchResults] = React.useState<PersonInterface[] | null>(null);
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>(["photo", "displayName"]);
   const [isSearchPerformed, setIsSearchPerformed] = React.useState(false);
@@ -96,6 +95,8 @@ export const PeoplePage = memo(() => {
   const [loadAll, setLoadAll] = React.useState(false);
   const [allPeople, setAllPeople] = React.useState<PersonInterface[]>([]);
   const [maybeMore, setMaybeMore] = React.useState(true);
+  const [isFetchingPeople, setIsFetchingPeople] = React.useState(false);
+  const [fetchTick, setFetchTick] = React.useState(0);
   const [toast, setToast] = React.useState<{ open: boolean; message: string; severity: "success" | "error" }>({
     open: false,
     message: "",
@@ -104,15 +105,9 @@ export const PeoplePage = memo(() => {
   const canEdit = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
   const currentPersonId = UserHelper.currentUserChurch?.person?.id || "";
 
-  const peopleQuery = useQuery<PersonInterface[]>({
-    queryKey: [loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`, "MembershipApi"],
-    placeholderData: [],
-    enabled: ApiHelper.isAuthenticated
-  });
-
   const refetch = useCallback(() => {
-    peopleQuery.refetch();
-  }, [peopleQuery]);
+    setFetchTick((t) => t + 1);
+  }, []);
 
   const columns = [
     { key: "photo", label: Locale.label("people.peoplePage.photo"), shortName: "" },
@@ -156,17 +151,16 @@ export const PeoplePage = memo(() => {
   }, []);
 
   React.useEffect(() => {
-    if (peopleQuery.isPlaceholderData) return;
-    const data = peopleQuery.data;
-    if (!data) return;
-    if (!Array.isArray(data)) {
-      peopleQuery.refetch();
-      return;
-    }
-    const expanded = data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d));
-    setAllPeople(expanded);
-    setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
-  }, [peopleQuery.data, peopleQuery.isPlaceholderData, loadAll]);
+    if (!ApiHelper.isAuthenticated) return;
+    const url = loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`;
+    setIsFetchingPeople(true);
+    ApiHelper.get(url, "MembershipApi").then((data: any) => {
+      if (Array.isArray(data)) {
+        setAllPeople(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
+      }
+    }).finally(() => setIsFetchingPeople(false));
+  }, [loadAll, fetchTick]);
 
   const resetSearchResults = useCallback(() => {
     setSearchResults(allPeople);
@@ -175,9 +169,9 @@ export const PeoplePage = memo(() => {
 
   React.useEffect(() => {
     if (isSearchPerformed) return;
-    if (allPeople.length === 0 && peopleQuery.isFetching) return;
+    if (allPeople.length === 0 && isFetchingPeople) return;
     setSearchResults(allPeople);
-  }, [allPeople, isSearchPerformed, peopleQuery.isFetching]);
+  }, [allPeople, isSearchPerformed, isFetchingPeople]);
 
   const handleShowAll = useCallback(() => {
     setLoadAll(true);
