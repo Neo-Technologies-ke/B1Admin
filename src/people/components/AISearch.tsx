@@ -22,7 +22,7 @@ export const AISearch = (props: Props) => {
     setIsLoading(true);
     try {
       // First, get the filters from MembershipApi
-      const filters: SearchCondition[] = await ApiHelper.post("/membership/query/members", { text }, "MembershipApi");
+      const filters: SearchCondition[] = await ApiHelper.post("/query/members", { text }, "MembershipApi");
 
       // Then use those filters to search for people
       const response = await ApiHelper.post("/people/advancedSearch", filters, "MembershipApi");
