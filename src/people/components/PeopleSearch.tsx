@@ -32,14 +32,16 @@ export function PeopleSearch(props: Props) {
     if (advancedConditions && advancedConditions.length > 0) {
       // Advanced search with conditions
       ApiHelper.post("/people/advancedSearch", advancedConditions, "MembershipApi").then((data: any) => {
-        props.updateSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        props.updateSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else if (term.trim()) {
       // Simple search by name
       const conditions: SearchCondition[] = [{ field: "displayName", operator: "contains", value: term.trim() }];
       props.onReportCriteria?.(conditions);
       ApiHelper.post("/people/advancedSearch", conditions, "MembershipApi").then((data: any) => {
-        props.updateSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        props.updateSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else {
       props.onReportCriteria?.(null);

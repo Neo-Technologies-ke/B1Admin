@@ -156,7 +156,7 @@ export const PeoplePage = memo(() => {
   React.useEffect(() => {
     if (peopleQuery.isPlaceholderData) return;
     const data = peopleQuery.data;
-    if (!data) return;
+    if (!data || !Array.isArray(data)) return;
     const expanded = data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d));
     setAllPeople(expanded);
     setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
@@ -188,13 +188,15 @@ export const PeoplePage = memo(() => {
       setSaveableCriteria(null);
       setSelectedListFilters(undefined);
       ApiHelper.get(`/lists/${list.id}/people`, "MembershipApi").then((data: any) => {
-        setSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        setSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else if (Array.isArray(conditions)) {
       setSaveableCriteria(conditions);
       setSelectedListFilters(undefined);
       ApiHelper.post("/people/advancedSearch", conditions, "MembershipApi").then((data: any) => {
-        setSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        setSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else {
       // Advanced list: seed the advanced panel (new ref each time so re-selecting re-seeds).

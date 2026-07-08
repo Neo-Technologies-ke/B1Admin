@@ -467,7 +467,8 @@ export const AdvancedPeopleSearch = memo(function AdvancedPeopleSearch(props: Pr
       debounceTimerRef.current = setTimeout(async () => {
         const postConditions = await convertConditions();
         ApiHelper.post("/people/advancedSearch", postConditions, "MembershipApi").then((data: any) => {
-          props.updateSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+          const arr = Array.isArray(data) ? data : [];
+          props.updateSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
         });
       }, 500);
     } else {
@@ -629,7 +630,8 @@ export const AdvancedPeopleSearch = memo(function AdvancedPeopleSearch(props: Pr
     props.onReportCriteria?.(activeFilters);
     const postConditions = await convertConditions();
     ApiHelper.post("/people/advancedSearch", postConditions, "MembershipApi").then((data: any) => {
-      props.updateSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+      const arr = Array.isArray(data) ? data : [];
+      props.updateSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
     });
   }, [convertConditions, props.updateSearchResults, activeFilters]);
 
