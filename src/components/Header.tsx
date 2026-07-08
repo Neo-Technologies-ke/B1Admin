@@ -158,30 +158,15 @@ export const Header: React.FC = () => {
       });
     };
 
-    const patchLogo = () => {
-      const navBtn = document.getElementById("primaryNavButton");
-      if (!navBtn) return;
-      const img = navBtn.querySelector("img") as HTMLImageElement | null;
-      if (img && img.src !== window.location.origin + "/images/logo-icon.png") {
-        img.src = "/images/logo-icon.png";
-        img.alt = "Life Reformation Centre";
-        img.style.cssText = "height:36px;width:auto;max-width:36px;object-fit:contain;display:block";
-      }
-    };
-
     // Add test IDs after a short delay to ensure DOM is ready
-    const timer = setTimeout(() => { addTestIds(); patchLogo(); }, 100);
-    const t2 = setTimeout(patchLogo, 500);
-    const t3 = setTimeout(patchLogo, 1500);
+    const timer = setTimeout(addTestIds, 100);
 
     // Also add test IDs when menu items change
-    const observer = new MutationObserver(() => { addTestIds(); patchLogo(); });
+    const observer = new MutationObserver(addTestIds);
     observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(t2);
-      clearTimeout(t3);
       observer.disconnect();
     };
   }, [primaryMenu, secondaryMenu]);
@@ -189,14 +174,32 @@ export const Header: React.FC = () => {
   /*<Typography variant="h6" noWrap>{UserHelper.currentUserChurch?.church?.name || ""}</Typography>*/
 
   return (
-    <SiteHeader
-      primaryMenuItems={primaryMenu}
-      primaryMenuLabel={getPrimaryLabel()}
-      secondaryMenuItems={secondaryMenu.menuItems}
-      secondaryMenuLabel={secondaryMenu.label}
-      context={context}
-      appName={"Life Reformation Centre"}
-      onNavigate={handleNavigate}
-    />
+    <div style={{ position: "relative" }}>
+      <SiteHeader
+        primaryMenuItems={primaryMenu}
+        primaryMenuLabel={getPrimaryLabel()}
+        secondaryMenuItems={secondaryMenu.menuItems}
+        secondaryMenuLabel={secondaryMenu.label}
+        context={context}
+        appName={"Life Reformation Centre"}
+        onNavigate={handleNavigate}
+      />
+      {/* Overlay our logo directly on top of the B1 R icon — position matches #primaryNavButton img */}
+      <img
+        src="/images/logo-icon.png"
+        alt="Life Reformation Centre"
+        style={{
+          position: "absolute",
+          top: "14px",
+          left: "12px",
+          height: "36px",
+          width: "36px",
+          objectFit: "contain",
+          zIndex: 1400,
+          pointerEvents: "none",
+          borderRadius: "4px"
+        }}
+      />
+    </div>
   );
 };

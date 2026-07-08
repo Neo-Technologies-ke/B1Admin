@@ -128,13 +128,9 @@ export const GlobalThemeStyles: React.FC = () => {
         border-radius: 12px !important;
       }
 
-      /* Replace B1 logo in the primary nav button with LRC logo via CSS */
+      /* Hide the B1 R logo — our overlay img in Header.tsx covers it */
       #primaryNavButton img {
-        content: url('/images/logo-icon.png') !important;
-        height: 36px !important;
-        width: auto !important;
-        max-width: 36px !important;
-        object-fit: contain !important;
+        visibility: hidden !important;
       }
     `;
 
