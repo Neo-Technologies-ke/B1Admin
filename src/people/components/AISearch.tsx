@@ -27,7 +27,8 @@ export const AISearch = (props: Props) => {
       // Then use those filters to search for people
       const response = await ApiHelper.post("/people/advancedSearch", filters, "MembershipApi");
 
-      props.updateSearchResults(response?.map((p: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(p)));
+      const arr = Array.isArray(response) ? response : [];
+      props.updateSearchResults(arr.map((p: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(p)));
       if (filters?.length) props.onReportCriteria?.(filters);
       setIsSearched(true);
     } catch (error) {
