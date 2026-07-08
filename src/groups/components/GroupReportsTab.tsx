@@ -34,29 +34,29 @@ const statusColor = (status: string): "default" | "warning" | "success" => {
 
 export const GroupReportsTab = ({ group }: Props) => {
   const queryClient = useQueryClient();
-  const canEdit = UserHelper.checkAccess(Permissions.groupMembers.edit);
+  const canEdit = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<GroupReport | null>(null);
   const [form, setForm] = React.useState({ title: "", content: "", reportDate: new Date().toISOString().split("T")[0] });
 
   const reports = useQuery<GroupReport[]>({
-    queryKey: [`/membership/groupReports?groupId=${group?.id}`, "MembershipApi"],
+    queryKey: [`/groupReports?groupId=${group?.id}`, "MembershipApi"],
     enabled: !!group?.id
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data: GroupReport) => ApiHelper.post("/membership/groupReports", data, "MembershipApi"),
+    mutationFn: (data: GroupReport) => ApiHelper.post("/groupReports", data, "MembershipApi"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/membership/groupReports?groupId=${group?.id}`, "MembershipApi"] });
+      queryClient.invalidateQueries({ queryKey: [`/groupReports?groupId=${group?.id}`, "MembershipApi"] });
       handleClose();
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => ApiHelper.delete(`/membership/groupReports/${id}`, "MembershipApi"),
+    mutationFn: (id: string) => ApiHelper.delete(`/groupReports/${id}`, "MembershipApi"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/membership/groupReports?groupId=${group?.id}`, "MembershipApi"] });
+      queryClient.invalidateQueries({ queryKey: [`/groupReports?groupId=${group?.id}`, "MembershipApi"] });
     }
   });
 
