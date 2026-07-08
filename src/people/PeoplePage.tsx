@@ -14,6 +14,7 @@ import { PageHeader } from "@churchapps/apphelper";
 import { AppIconButton } from "../components/ui/AppIconButton";
 import { CountChip, ExportButton } from "../components/ui";
 import { useQueryClient } from "@tanstack/react-query";
+import UserContext from "../UserContext";
 import { AISearch } from "./components/AISearch";
 import { PeopleBulkActions } from "./components/bulk/PeopleBulkActions";
 import { type BulkResult } from "./components/bulk/BulkFieldDialog";
@@ -77,6 +78,8 @@ const formatHeader = (key: string): string => {
 };
 
 export const PeoplePage = memo(() => {
+  const context = React.useContext(UserContext);
+  const churchId = context?.userChurch?.church?.id || "";
   const [searchResults, setSearchResults] = React.useState<PersonInterface[] | null>(null);
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>(["photo", "displayName"]);
   const [isSearchPerformed, setIsSearchPerformed] = React.useState(false);
@@ -151,7 +154,7 @@ export const PeoplePage = memo(() => {
   }, []);
 
   React.useEffect(() => {
-    if (!ApiHelper.isAuthenticated) return;
+    if (!churchId || !ApiHelper.isAuthenticated) return;
     const url = loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`;
     setIsFetchingPeople(true);
     ApiHelper.get(url, "MembershipApi").then((data: any) => {
@@ -160,7 +163,7 @@ export const PeoplePage = memo(() => {
         setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
       }
     }).finally(() => setIsFetchingPeople(false));
-  }, [loadAll, fetchTick]);
+  }, [churchId, loadAll, fetchTick]);
 
   const resetSearchResults = useCallback(() => {
     setSearchResults(allPeople);
