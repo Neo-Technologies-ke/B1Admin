@@ -127,11 +127,18 @@ export const GlobalThemeStyles: React.FC = () => {
         background-color: rgba(255, 255, 255, 0.2) !important;
         border-radius: 12px !important;
       }
+
+      /* Replace B1 logo in the primary nav button with LRC logo via CSS */
+      #primaryNavButton img {
+        content: url('/images/logo-icon.png') !important;
+        height: 36px !important;
+        width: auto !important;
+        max-width: 36px !important;
+        object-fit: contain !important;
+      }
     `;
 
     styleElement.textContent = css;
-
-    // Logo patching is handled in Header.tsx which has the correct lifecycle timing.
   }, [colors, logoUrl]);
 
   return null;
