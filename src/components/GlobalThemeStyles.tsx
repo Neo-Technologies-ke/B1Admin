@@ -129,31 +129,33 @@ export const GlobalThemeStyles: React.FC = () => {
       }
     `;
 
-    if (logoUrl) {
-      css += `
-        #site-toolbar::before {
-          content: '';
-          display: inline-block;
-          width: 32px;
-          height: 32px;
-          background-image: url('${logoUrl}');
-          background-size: contain;
-          background-repeat: no-repeat;
-          background-position: center;
-          margin-right: 12px;
-        }
-      `;
-    } else {
-      css += `
-        #site-toolbar::before {
-          content: none;
-        }
-      `;
-    }
-
     styleElement.textContent = css;
 
-    console.log("🎨 GlobalThemeStyles: Applied theme CSS", { colors, logoUrl });
+    // Replace the B1 logo img inside the primary nav button with the church logo
+    const replaceHeaderLogo = () => {
+      const navBtn = document.getElementById("primaryNavButton");
+      if (!navBtn) return;
+      const img = navBtn.querySelector("img") as HTMLImageElement | null;
+      if (!img) return;
+      const churchLogoUrl = logoUrl || "/images/logo-icon.png";
+      if (img.src !== churchLogoUrl && !img.src.endsWith(churchLogoUrl)) {
+        img.src = churchLogoUrl;
+        img.style.height = "36px";
+        img.style.width = "auto";
+        img.style.maxWidth = "160px";
+        img.style.objectFit = "contain";
+      }
+    };
+
+    replaceHeaderLogo();
+    // Re-run after a short delay in case the header mounts after this effect
+    const t1 = setTimeout(replaceHeaderLogo, 300);
+    const t2 = setTimeout(replaceHeaderLogo, 1000);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [colors, logoUrl]);
 
   return null;
