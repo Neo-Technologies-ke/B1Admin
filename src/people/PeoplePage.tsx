@@ -1,5 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import UserContext from "../UserContext";
 import { Permissions, UserHelper, type PersonInterface, type SearchCondition } from "@churchapps/helpers";
 import { ApiHelper, Locale } from "@churchapps/apphelper";
 import { PeopleSearchResults, PeopleColumns } from "./components";
@@ -77,6 +78,8 @@ const formatHeader = (key: string): string => {
 };
 
 export const PeoplePage = memo(() => {
+  const context = React.useContext(UserContext);
+  const churchId = context.userChurch?.church?.id;
   const [searchResults, setSearchResults] = React.useState<PersonInterface[] | null>(null);
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>(["photo", "displayName"]);
   const [isSearchPerformed, setIsSearchPerformed] = React.useState(false);
@@ -104,8 +107,9 @@ export const PeoplePage = memo(() => {
   const currentPersonId = UserHelper.currentUserChurch?.person?.id || "";
 
   const peopleQuery = useQuery<PersonInterface[]>({
-    queryKey: [loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`, "MembershipApi"],
-    placeholderData: []
+    queryKey: [loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`, "MembershipApi", churchId],
+    placeholderData: [],
+    enabled: !!churchId
   });
 
   const refetch = useCallback(() => {
@@ -156,7 +160,11 @@ export const PeoplePage = memo(() => {
   React.useEffect(() => {
     if (peopleQuery.isPlaceholderData) return;
     const data = peopleQuery.data;
-    if (!data || !Array.isArray(data)) return;
+    if (!data) return;
+    if (!Array.isArray(data)) {
+      peopleQuery.refetch();
+      return;
+    }
     const expanded = data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d));
     setAllPeople(expanded);
     setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
