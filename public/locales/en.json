@@ -270,7 +270,8 @@
       "template": "Template",
       "title": "New Event",
       "visibility": "Visibility",
-      "weekly": "Weekly"
+      "weekly": "Weekly",
+      "wholeChurch": "Whole Church"
     },
     "rooms": {
       "addBlockout": "Add Blockout",

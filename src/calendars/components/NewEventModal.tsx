@@ -143,7 +143,7 @@ export function NewEventModal(props: Props) {
     }
   };
 
-  const valid = groupId && title.trim() && start && end && new Date(end) > new Date(start);
+  const valid = title.trim() && start && end && new Date(end) > new Date(start);
 
   return (
     <Dialog open={true} onClose={() => props.onDone(false)} fullWidth scroll="body">
@@ -151,6 +151,7 @@ export function NewEventModal(props: Props) {
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField fullWidth select label={Locale.label("calendars.newEvent.group")} value={groupId} onChange={(e) => setGroupId(e.target.value)} data-testid="new-event-group-select">
+            <MenuItem value="">{Locale.label("calendars.newEvent.wholeChurch")}</MenuItem>
             {groups.map((g) => <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)}
           </TextField>
           {templates.length > 0 && (
