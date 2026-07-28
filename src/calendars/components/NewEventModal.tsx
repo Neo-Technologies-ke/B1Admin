@@ -116,8 +116,9 @@ export function NewEventModal(props: Props) {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const eventGroupId = groupId === "whole_church" ? undefined : groupId;
       const event: EventInterface = {
-        groupId,
+        groupId: eventGroupId,
         title,
         description,
         start: new Date(start),
@@ -136,7 +137,7 @@ export function NewEventModal(props: Props) {
         ...resourceIds.map((resourceId) => ({ eventId, resourceId, quantity: 1, ...window }))
       ];
       if (bookings.length > 0) await ApiHelper.post("/eventBookings", bookings, "ContentApi");
-      if (props.curatedCalendarId) await ApiHelper.post("/curatedEvents", [{ curatedCalendarId: props.curatedCalendarId, groupId, eventIds: [eventId] }], "ContentApi");
+      if (props.curatedCalendarId) await ApiHelper.post("/curatedEvents", [{ curatedCalendarId: props.curatedCalendarId, groupId: eventGroupId, eventIds: [eventId] }], "ContentApi");
       props.onDone(true);
     } catch {
       setSaving(false);
@@ -151,7 +152,7 @@ export function NewEventModal(props: Props) {
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField fullWidth select label={Locale.label("calendars.newEvent.group")} value={groupId} onChange={(e) => setGroupId(e.target.value)} data-testid="new-event-group-select">
-            <MenuItem value="">{Locale.label("calendars.newEvent.wholeChurch")}</MenuItem>
+            <MenuItem value="whole_church">{Locale.label("calendars.newEvent.wholeChurch")}</MenuItem>
             {groups.map((g) => <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)}
           </TextField>
           {templates.length > 0 && (
