@@ -2883,6 +2883,10 @@
     "appEdit": {
       "addTab": "Add Tab",
       "bible": "Bible",
+      "calendar": "Calendar",
+      "calendarChurchWide": "Whole Church Calendar",
+      "calendarMyGroups": "My Groups Calendar",
+      "calendarScope": "Calendar Scope",
       "changeImage": "Change Image",
       "checkin": "Check-in",
       "deleteTab": "Delete Tab",
