@@ -23,7 +23,8 @@ export const SendInviteDialog: React.FC<Props> = (props) => {
         email: props.personEmail,
         personName: props.personName,
         contextName: props.contextName,
-        churchName: UserHelper.currentUserChurch?.church?.name || ""
+        churchName: UserHelper.currentUserChurch?.church?.name || "",
+        subDomain: UserHelper.currentUserChurch?.church?.subDomain || ""
       }, "MembershipApi");
       setSent(true);
       setTimeout(() => props.onClose(), 1500);
