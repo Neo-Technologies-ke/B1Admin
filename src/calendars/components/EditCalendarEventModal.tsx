@@ -22,8 +22,8 @@ import {
 import type { SelectChangeEvent } from "@mui/material/Select";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { Loading, EventHelper, ApiHelper, Locale } from "@churchapps/apphelper";
-import { type GroupInterface, type EventInterface } from "@churchapps/helpers";
+import { Loading, ApiHelper, Locale } from "@churchapps/apphelper";
+import { EventHelper, type GroupInterface, type EventInterface } from "@churchapps/helpers";
 
 interface Props {
   churchId: string;
