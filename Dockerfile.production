@@ -48,6 +48,11 @@ COPY scripts ./scripts
 # Install dependencies (postinstall runs patch-apphelper.cjs with env vars already set)
 RUN corepack enable && YARN_ENABLE_SCRIPTS=true yarn install --immutable
 
+# Patch @churchapps/helpers EventHelper.getFullRRule bug (dtstart mutation
+# after RRule construction is a no-op, causing monthly/weekly recurring
+# events to expand on today's day instead of their real start date)
+RUN node scripts/patch-eventhelper.cjs
+
 # Force local API domains in bundled dependency defaults
 RUN find node_modules/@churchapps -type f -name "*.js" -exec sed -i \
   -e 's#https://api\.churchapps\.org#/api#g' \
