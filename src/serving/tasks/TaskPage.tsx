@@ -7,7 +7,7 @@ import { ContentPicker } from "./components/ContentPicker";
 import UserContext from "../../UserContext";
 import { RequestedChanges } from "./components/RequestedChanges";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Person as PersonIcon, Group as GroupIcon, CheckCircle as CompletedIcon, RadioButtonUnchecked as OpenIcon } from "@mui/icons-material";
+import { Person as PersonIcon, Group as GroupIcon, CheckCircle as CompletedIcon, RadioButtonUnchecked as OpenIcon, HourglassEmpty as InProgressIcon } from "@mui/icons-material";
 
 export const TaskPage = () => {
   const params = useParams();
@@ -59,7 +59,7 @@ export const TaskPage = () => {
       if (!task.data) return;
       const t = { ...task.data };
       t.status = status;
-      t.dateClosed = status === "Open" ? null : new Date();
+      t.dateClosed = status === "Closed" ? new Date() : null;
       updateTaskMutation.mutate(t);
     },
     [task.data, updateTaskMutation]
@@ -92,6 +92,14 @@ export const TaskPage = () => {
   if (task.isLoading) return <Loading />;
   if (!task.data) return <></>;
   else {
+    const statusConfig: Record<string, { icon: typeof OpenIcon; color: string }> = {
+      Open: { icon: OpenIcon, color: "warning" },
+      "In Progress": { icon: InProgressIcon, color: "info" },
+      Closed: { icon: CompletedIcon, color: "success" }
+    };
+    const currentStatus = statusConfig[task.data.status] || { icon: OpenIcon, color: "primary" };
+    const StatusIcon = currentStatus.icon;
+
     return (
       <>
         <PageHeader
@@ -99,16 +107,16 @@ export const TaskPage = () => {
           subtitle={`${Locale.label("tasks.taskPage.created")} ${DateHelper.getDisplayDuration(DateHelper.toDate(task.data?.dateCreated))} ${Locale.label("tasks.taskPage.ago")} ${Locale.label("tasks.taskPage.by")} ${task.data.createdByLabel} • ${Locale.label("tasks.taskPage.associated")}: ${task.data.associatedWithLabel || Locale.label("tasks.taskPage.notSpec")} • ${Locale.label("tasks.taskPage.assigned")}: ${task.data.assignedToLabel || Locale.label("tasks.taskPage.unassigned")}`}>
           <Stack direction="row" spacing={1}>
             <Button
-              variant={task.data.status === "Open" ? "contained" : "outlined"}
-              startIcon={task.data.status === "Open" ? <OpenIcon /> : <CompletedIcon />}
+              variant={task.data.status !== "Closed" ? "contained" : "outlined"}
+              startIcon={<StatusIcon />}
               onClick={(e) => setAnchorEl(e.currentTarget)}
               sx={{
-                color: task.data.status === "Open" ? "#FFF" : "#FFF",
-                backgroundColor: task.data.status === "Open" ? "warning.main" : "transparent",
-                borderColor: task.data.status === "Open" ? "warning.main" : "success.main",
+                color: "#FFF",
+                backgroundColor: task.data.status !== "Closed" ? `${currentStatus.color}.main` : "transparent",
+                borderColor: `${currentStatus.color}.main`,
                 "&:hover": {
-                  backgroundColor: task.data.status === "Open" ? "warning.dark" : "rgba(76, 175, 80, 0.2)",
-                  borderColor: task.data.status === "Open" ? "warning.dark" : "success.main"
+                  backgroundColor: task.data.status !== "Closed" ? `${currentStatus.color}.dark` : "rgba(255, 255, 255, 0.1)",
+                  borderColor: `${currentStatus.color}.main`
                 },
                 textTransform: "none",
                 fontWeight: 600
@@ -158,6 +166,13 @@ export const TaskPage = () => {
               closeStatusMenu();
             }}>
             <OpenIcon sx={{ mr: 1 }} /> {Locale.label("tasks.taskPage.open")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleStatusChange("In Progress");
+              closeStatusMenu();
+            }}>
+            <InProgressIcon sx={{ mr: 1 }} /> In Progress
           </MenuItem>
           <MenuItem
             onClick={() => {
