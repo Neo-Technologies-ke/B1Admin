@@ -22,3 +22,12 @@ EnvironmentHelper.init().then(() => {
   //root.render(<React.StrictMode><App /></React.StrictMode>);
   root.render(<App />);
 });
+
+// Register the PWA service worker in production builds.
+if ('serviceWorker' in navigator && (import.meta as any).env?.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.error('Service worker registration failed:', err);
+    });
+  });
+}

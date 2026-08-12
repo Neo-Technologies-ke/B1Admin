@@ -6,7 +6,8 @@ import { ThemeContextProvider, useThemeMode } from "./ThemeContext";
 import { ThemeProvider as ChurchThemeProvider } from "./contexts/ThemeContext";
 import { GlobalThemeStyles } from "./components/GlobalThemeStyles";
 import { CookiesProvider } from "react-cookie";
-import { createTheme, CssBaseline, ThemeProvider, type PaletteMode } from "@mui/material";
+import { CssBaseline, ThemeProvider, type PaletteMode } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import "@churchapps/apphelper/dist/markdown/components/markdownEditor/editor.css";
 //TODO export the css from apphelper
 import { EnvironmentHelper } from "./helpers";
@@ -102,7 +103,7 @@ const createMdTheme = (mode: PaletteMode) =>
 
 const ThemedApp: React.FC = () => {
   const { mode } = useThemeMode();
-  const theme = useMemo(() => createMdTheme(mode), [mode]);
+  const theme = useMemo(() => responsiveFontSizes(createMdTheme(mode)), [mode]);
 
   return (
     <ThemeProvider theme={theme}>
