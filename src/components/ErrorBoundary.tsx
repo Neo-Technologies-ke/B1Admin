@@ -34,6 +34,13 @@ const DefaultErrorFallback: React.FC<ErrorInfo> = ({ error, resetError }) => (
   </Box>
 );
 
+const STALE_CHUNK_RELOAD_KEY = "b1admin-stale-chunk-reload";
+
+const isStaleChunkError = (error: Error): boolean => {
+  const message = error?.message || "";
+  return /failed to fetch dynamically imported module|loading chunk .* failed|importing a module script failed/i.test(message);
+};
+
 export class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -46,6 +53,18 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
+    if (isStaleChunkError(error)) {
+      // A new deploy replaced the JS chunks referenced by the currently loaded page.
+      // Force a hard reload once to pick up the latest index.html and assets.
+      const alreadyReloaded = window.sessionStorage.getItem(STALE_CHUNK_RELOAD_KEY) === "1";
+      if (!alreadyReloaded) {
+        window.sessionStorage.setItem(STALE_CHUNK_RELOAD_KEY, "1");
+        window.location.reload();
+        return;
+      }
+    } else {
+      window.sessionStorage.removeItem(STALE_CHUNK_RELOAD_KEY);
+    }
     this.setState({ error, errorInfo });
   }
 

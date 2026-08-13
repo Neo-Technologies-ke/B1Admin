@@ -6,6 +6,7 @@ import { GroupMembersTab } from "./components/GroupMembersTab";
 import { GroupSessionsTab } from "./components/GroupSessionsTab";
 import { GroupCalendarTab } from "./components/GroupCalendarTab";
 import { GroupHealthTab } from "./components/GroupHealthTab";
+import { GroupReportsTab } from "./components/GroupReportsTab";
 import { Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
@@ -31,6 +32,7 @@ export const GroupPage = () => {
       case "sessions": return <GroupSessionsTab key="sessions" group={group.data} />;
       case "calendar": return <GroupCalendarTab key="calendar" group={group.data} />;
       case "health": return <GroupHealthTab key="health" group={group.data} />;
+      case "reports": return <GroupReportsTab key="reports" group={group.data} />;
       default: return <GroupMembersTab key="members" group={group.data} />;
     }
   };

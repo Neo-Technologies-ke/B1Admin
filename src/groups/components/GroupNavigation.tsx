@@ -1,5 +1,5 @@
 import { type GroupInterface } from "@churchapps/helpers";
-import { Group as GroupIcon, CalendarMonth as AttendanceIcon, Event as EventIcon, MonitorHeart as HealthIcon } from "@mui/icons-material";
+import { Group as GroupIcon, CalendarMonth as AttendanceIcon, Event as EventIcon, MonitorHeart as HealthIcon, Article as ReportIcon } from "@mui/icons-material";
 import { memo, useMemo } from "react";
 import { NavigationTabs, type NavigationTab } from "../../components/ui";
 import { Locale, Permissions, UserHelper } from "@churchapps/apphelper";
@@ -27,6 +27,7 @@ export const GroupNavigation = memo((props: Props) => {
       if (UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view)) {
         baseTabs.push({ value: "health", label: Locale.label("groups.groupNavigation.health"), icon: <HealthIcon /> });
       }
+      baseTabs.push({ value: "reports", label: Locale.label("groups.groupReportsPage.title"), icon: <ReportIcon /> });
     }
 
     return baseTabs;

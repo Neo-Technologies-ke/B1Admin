@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route, useNavigate, Navigate, Outlet } from "react-router-dom";
 import { Wrapper, ErrorBoundary } from "./components";
-import { NotificationService, UserHelper } from "@churchapps/apphelper";
+import { ApiHelper, NotificationService, UserHelper } from "@churchapps/apphelper";
 import { Box } from "@mui/material";
 import { PageSkeleton } from "./components/ui/PageSkeleton";
 import UserContext from "./UserContext";
@@ -14,6 +14,7 @@ const GroupsPage = React.lazy(() => import("./groups/GroupsPage"));
 const GroupPage = React.lazy(() => import("./groups/GroupPage").then((module) => ({ default: module.GroupPage })));
 const PendingRequestsPage = React.lazy(() => import("./groups/PendingRequestsPage"));
 const GroupsHealthPage = React.lazy(() => import("./groups/GroupsHealthPage"));
+const GroupReportsPage = React.lazy(() => import("./groups/GroupReportsPage").then((module) => ({ default: module.GroupReportsPage })));
 const AttendancePage = React.lazy(() => import("./attendance/AttendancePage").then((module) => ({ default: module.AttendancePage })));
 const DonationsPage = React.lazy(() => import("./donations/DonationsPage").then((module) => ({ default: module.DonationsPage })));
 const DonationBatchPage = React.lazy(() => import("./donations/DonationBatchPage").then((module) => ({ default: module.DonationBatchPage })));
@@ -88,6 +89,40 @@ export const Authenticated: React.FC = () => {
     });
   }, [context.person?.id, context.userChurch?.church?.id]);
 
+  // Dynamically set page title and favicon from church settings
+  React.useEffect(() => {
+    const churchId = context.userChurch?.church?.id;
+    const churchName = context.userChurch?.church?.name || "Life Reformation Centre";
+    if (!churchId) return;
+
+    document.title = `Admin - ${churchName}`;
+
+    ApiHelper.getAnonymous(`/settings/public/${churchId}`, "MembershipApi")
+      .then((settings: any) => {
+        if (!settings) return;
+
+        const faviconUrl = settings.favicon_16x16 || settings.favicon_400x400 || settings.logoLight || settings.brandLogoUrl;
+        if (faviconUrl) {
+          let link: HTMLLinkElement = document.querySelector("link[rel='icon']");
+          if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+          }
+          link.href = faviconUrl;
+
+          let appleLink: HTMLLinkElement = document.querySelector("link[rel='apple-touch-icon']");
+          if (!appleLink) {
+            appleLink = document.createElement("link");
+            appleLink.rel = "apple-touch-icon";
+            document.head.appendChild(appleLink);
+          }
+          appleLink.href = settings.favicon_400x400 || settings.logoLight || faviconUrl;
+        }
+      })
+      .catch(() => {});
+  }, [context.userChurch?.church?.id, context.userChurch?.church?.name]);
+
   const LayoutWithWrapper: React.FC = () => (
     <Box sx={{ display: "flex" }}>
       <Wrapper>
@@ -116,6 +151,7 @@ export const Authenticated: React.FC = () => {
           <Route path="/people" element={<PeoplePage />} />
           <Route path="/groups/pending" element={<PendingRequestsPage />} />
           <Route path="/groups/health" element={<GroupsHealthPage />} />
+          <Route path="/groups/reports" element={<GroupReportsPage />} />
           <Route path="/groups/:id" element={<GroupPage />} />
           <Route path="/groups" element={<GroupsPage />} />
           <Route path="/attendance" element={<AttendancePage />} />

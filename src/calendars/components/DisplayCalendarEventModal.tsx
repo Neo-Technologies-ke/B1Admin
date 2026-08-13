@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogActions, Typography, Box, Button } from "@mui/material";
-import { HowToReg as RegIcon } from "@mui/icons-material";
+import { HowToReg as RegIcon, Edit as EditIcon } from "@mui/icons-material";
 import { DateHelper, ApiHelper, Locale } from "@churchapps/apphelper";
 import { type CuratedEventWithEventInterface } from "@churchapps/helpers";
+import { NewEventModal } from "./NewEventModal";
 
 interface Props {
   event: CuratedEventWithEventInterface;
@@ -13,6 +15,7 @@ interface Props {
 
 export function DisplayCalendarEventModal(props: Props) {
   const navigate = useNavigate();
+  const [showEdit, setShowEdit] = useState(false);
   const realEventId = (props.event as CuratedEventWithEventInterface & { realEventId?: string }).realEventId;
 
   const getDisplayTime = () => {
@@ -73,6 +76,11 @@ export function DisplayCalendarEventModal(props: Props) {
         <Button variant="text" onClick={props.onDone} data-testid="calendar-event-cancel-button">
           {Locale.label("calendars.calendarEvent.cancel")}
         </Button>
+        {props.event.eventId && props.mode === "edit" && (
+          <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setShowEdit(true)} data-testid="calendar-event-edit-button">
+            {Locale.label("common.edit")}
+          </Button>
+        )}
         {realEventId && props.mode === "edit" && (
           <Button variant="outlined" startIcon={<RegIcon />} onClick={() => navigate("/registrations/" + realEventId)} data-testid="calendar-event-registrations-button">
             {Locale.label("calendars.calendarEvent.manageRegistrations")}
@@ -84,6 +92,17 @@ export function DisplayCalendarEventModal(props: Props) {
           </Button>
         )}
       </DialogActions>
+      {showEdit && props.event.eventId && (
+        <NewEventModal
+          churchId={props.event.churchId}
+          curatedCalendarId={props.curatedCalendarId}
+          eventId={props.event.eventId}
+          onDone={(saved) => {
+            setShowEdit(false);
+            if (saved && props.onDone) props.onDone();
+          }}
+        />
+      )}
     </Dialog>
   );
 }

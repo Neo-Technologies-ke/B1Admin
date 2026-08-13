@@ -95,7 +95,7 @@
     "exec-deploy-prod": "aws s3 sync dist/ s3://chums-app --exclude \"sw.js\" && aws s3 cp dist/sw.js s3://chums-app/sw.js --cache-control no-cache",
     "postdeploy-prod": "aws cloudfront create-invalidation --distribution-id E2OZ4STEUZXHZZ --paths \"/*\"",
     "deploy-prod": "yarn predeploy-prod && yarn exec-deploy-prod && yarn postdeploy-prod",
-    "postinstall": "copyfiles -a -f \"node_modules/@churchapps/apphelper/dist/public/locales/**\" public/apphelper/locales && copyfiles -a -f \"node_modules/@churchapps/apphelper/dist/public/css/**\" public/apphelper/css"
+    "postinstall": "copyfiles -a -f \"node_modules/@churchapps/apphelper/dist/public/locales/**\" public/apphelper/locales && copyfiles -a -f \"node_modules/@churchapps/apphelper/dist/public/css/**\" public/apphelper/css && node scripts/patch-eventhelper.cjs"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js}": [

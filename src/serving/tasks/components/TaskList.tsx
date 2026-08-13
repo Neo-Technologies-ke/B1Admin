@@ -3,7 +3,7 @@ import { Grid, Typography, Card, CardContent, Stack, Box, Chip, Button, Divider,
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { type GroupMemberInterface, type TaskInterface } from "@churchapps/helpers";
 import { ArrayHelper, DateHelper, Locale, UserHelper, Loading } from "@churchapps/apphelper";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NewTask } from "./";
 import UserContext from "../../../UserContext";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,8 @@ import {
   AssignmentInd as AssignedIcon,
   AssignmentTurnedIn as CreatedIcon,
   CheckBoxOutlined as OpenTasksIcon,
-  CheckBox as ClosedTasksIcon
+  CheckBox as ClosedTasksIcon,
+  HourglassEmpty as InProgressIcon
 } from "@mui/icons-material";
 
 interface Props {
@@ -38,6 +39,7 @@ export const TaskList = memo((props: Props) => {
   const [showAdd, setShowAdd] = React.useState(false);
   const [tab, setTab] = React.useState(0);
   const context = React.useContext(UserContext);
+  const navigate = useNavigate();
 
   // React Query hooks for data fetching
   const tasks = useQuery<TaskInterface[]>({
@@ -93,11 +95,25 @@ export const TaskList = memo((props: Props) => {
     groupTasks.refetch();
   }, [tasks, groupMembers, groupTasks]);
 
+  const statusIcons: Record<string, typeof OpenIcon> = {
+    Open: OpenIcon,
+    "In Progress": InProgressIcon,
+    Closed: CompletedIcon
+  };
+
+  const statusColors: Record<string, string> = {
+    Open: "warning",
+    "In Progress": "info",
+    Closed: "success"
+  };
+
   const getTask = useCallback(
     (task: TaskInterface) => (
       <Box
         key={task.id}
+        onClick={() => navigate("/serving/tasks/" + task.id)}
         sx={{
+          cursor: "pointer",
           mb: 2,
           p: 2,
           transition: "all 0.2s ease-in-out",
@@ -123,8 +139,6 @@ export const TaskList = memo((props: Props) => {
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography
                 variant="h6"
-                component={Link}
-                to={`/serving/tasks/${task.id}`}
                 sx={{
                   fontWeight: 600,
                   color: "primary.main",
@@ -146,12 +160,12 @@ export const TaskList = memo((props: Props) => {
             </Box>
 
             <Chip
-              icon={task.status === "Open" ? <OpenIcon /> : <CompletedIcon />}
+              icon={React.createElement(statusIcons[task.status] || OpenIcon)}
               label={task.status}
               size="small"
               sx={{
-                backgroundColor: task.status === "Open" ? "warning.light" : "success.light",
-                color: task.status === "Open" ? "warning.dark" : "success.dark",
+                backgroundColor: `${statusColors[task.status] || "default"}.light`,
+                color: `${statusColors[task.status] || "default"}.dark`,
                 fontWeight: 600,
                 flexShrink: 0
               }}
@@ -192,7 +206,7 @@ export const TaskList = memo((props: Props) => {
         </Stack>
       </Box>
     ),
-    [props.compact]
+    [props.compact, navigate]
   );
 
   const getSectionHeader = useCallback(

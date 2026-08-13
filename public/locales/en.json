@@ -270,7 +270,8 @@
       "template": "Template",
       "title": "New Event",
       "visibility": "Visibility",
-      "weekly": "Weekly"
+      "weekly": "Weekly",
+      "wholeChurch": "Whole Church"
     },
     "rooms": {
       "addBlockout": "Add Blockout",
@@ -346,6 +347,7 @@
       }
     },
     "custom": "Custom",
+    "date": "Date",
     "delete": "Delete",
     "done": "Done",
     "duplicate": "Duplicate",
@@ -403,6 +405,7 @@
     "tryAgain": "Try Again",
     "update": "Update",
     "website": "Website",
+    "unknown": "Unknown",
     "yes": "Yes"
   },
   "components": {
@@ -545,7 +548,7 @@
       "setAvatarDesc": "Upload a profile photo so your team can recognize you.",
       "setAvatarTitle": "Set Your Avatar",
       "subtitle": "Let's get your church set up. Here are some things you'll likely want to do first.",
-      "title": "Welcome to B1.church!",
+      "title": "Welcome to Life Reformation Centre!",
       "uploadSermonDesc": "Share your sermons online so people can watch anytime.",
       "uploadSermonTitle": "Upload a Sermon",
       "yourChurch": "Your Church",
@@ -555,7 +558,7 @@
       "dash": "Dashboard"
     },
     "memberWelcome": {
-      "downloadAppDesc": "Get the B1.church app on your phone to stay connected wherever you go.",
+      "downloadAppDesc": "Get the Life Reformation Centre app on your phone to stay connected wherever you go.",
       "downloadAppTitle": "Download the Mobile App",
       "fallbackChurchName": "your church",
       "findPeopleDesc": "Search the church directory to find and connect with others in the congregation.",
@@ -1208,6 +1211,28 @@
       "health": "Health",
       "members": "Members",
       "sessions": "Sessions"
+    },
+    "groupReportsPage": {
+      "title": "Group Reports",
+      "subtitle": "Written reports submitted by group leaders",
+      "totalUnread": "{total} total · {unread} unread",
+      "filterLabel": "Filter by Group",
+      "allGroups": "All Groups",
+      "emptyAll": "No group reports have been submitted yet.",
+      "emptyFiltered": "No reports for this group.",
+      "statusRead": "Read",
+      "statusUnread": "Unread",
+      "group": "Group",
+      "leader": "Leader",
+      "unknownGroup": "Unknown group"
+    },
+    "groupReportsTab": {
+      "writeReport": "Write Report",
+      "writeFirstReport": "Write First Report",
+      "editReport": "Edit Report",
+      "writeGroupReport": "Write Group Report",
+      "submitReport": "Submit Report",
+      "deleteConfirm": "Are you sure you want to delete this report?"
     },
     "groupPage": {
       "addPpl": "Add Person"
@@ -2859,6 +2884,10 @@
     "appEdit": {
       "addTab": "Add Tab",
       "bible": "Bible",
+      "calendar": "Calendar",
+      "calendarChurchWide": "Whole Church Calendar",
+      "calendarMyGroups": "My Groups Calendar",
+      "calendarScope": "Calendar Scope",
       "changeImage": "Change Image",
       "checkin": "Check-in",
       "deleteTab": "Delete Tab",
@@ -3221,13 +3250,16 @@
     "textingSettingsEdit": {
       "apiKey": "API Key",
       "apiSecret": "API Secret",
+      "africasTalking": "Africa's Talking",
       "clearstream": "Clearstream",
+      "textInChurch": "Text In Church",
       "clearstreamHelper": "Create an API Key in your",
       "clearstreamHelperLink": "Clearstream Account Settings",
       "clearstreamHelperSuffix": "under API Keys.",
       "none": "None",
       "provider": "Provider",
       "saveError": "Error saving texting settings.",
+      "username": "Username",
       "textInChurchHelper": "Visit",
       "textInChurchHelperLink": "Text In Church Support",
       "textInChurchHelperSuffix": "to request developer API access. Once approved, create an API Key in your Account Settings > Developer API section."

@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ControlPanel } from "./ControlPanel";
 import { UserProvider } from "./UserContext";
 import { ThemeContextProvider, useThemeMode } from "./ThemeContext";
+import { ThemeProvider as ChurchThemeProvider } from "./contexts/ThemeContext";
+import { GlobalThemeStyles } from "./components/GlobalThemeStyles";
 import { CookiesProvider } from "react-cookie";
-import { createTheme, CssBaseline, ThemeProvider, type PaletteMode } from "@mui/material";
+import { CssBaseline, ThemeProvider, type PaletteMode } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import "@churchapps/apphelper/dist/markdown/components/markdownEditor/editor.css";
 //TODO export the css from apphelper
 import { EnvironmentHelper } from "./helpers";
@@ -100,7 +103,7 @@ const createMdTheme = (mode: PaletteMode) =>
 
 const ThemedApp: React.FC = () => {
   const { mode } = useThemeMode();
-  const theme = useMemo(() => createMdTheme(mode), [mode]);
+  const theme = useMemo(() => responsiveFontSizes(createMdTheme(mode)), [mode]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,11 +111,14 @@ const ThemedApp: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <CookiesProvider defaultSetOptions={{ path: "/" }}>
           <UserProvider>
-            <Router>
-              <Routes>
-                <Route path="/*" element={<ControlPanel />} />
-              </Routes>
-            </Router>
+            <ChurchThemeProvider>
+              <GlobalThemeStyles />
+              <Router>
+                <Routes>
+                  <Route path="/*" element={<ControlPanel />} />
+                </Routes>
+              </Router>
+            </ChurchThemeProvider>
           </UserProvider>
         </CookiesProvider>
       </QueryClientProvider>
@@ -120,29 +126,32 @@ const ThemedApp: React.FC = () => {
   );
 };
 
-const App: React.FC = () => (
-  <>
-    {EnvironmentHelper.Common.GoogleAnalyticsTag && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${EnvironmentHelper.Common.GoogleAnalyticsTag}`} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${EnvironmentHelper.Common.GoogleAnalyticsTag}', {
-              page_path: window.location.pathname,
-            });
-          `
-          }}
-        />
-      </>
-    )}
+const App: React.FC = () => {
+  return (
+    <>
+      {EnvironmentHelper.Common.GoogleAnalyticsTag && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${EnvironmentHelper.Common.GoogleAnalyticsTag}`} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${EnvironmentHelper.Common.GoogleAnalyticsTag}', {
+                page_path: window.location.pathname,
+              });
+            `
+            }}
+          />
+        </>
+      )}
 
-    <ThemeContextProvider>
-      <ThemedApp />
-    </ThemeContextProvider>
-  </>
-);
+      <ThemeContextProvider>
+        <ThemedApp />
+      </ThemeContextProvider>
+    </>
+  );
+};
+
 export default App;

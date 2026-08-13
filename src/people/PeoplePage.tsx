@@ -13,7 +13,8 @@ import { People as PeopleIcon, PersonAdd as PersonAddIcon, Print as PrintIcon, B
 import { PageHeader } from "@churchapps/apphelper";
 import { AppIconButton } from "../components/ui/AppIconButton";
 import { CountChip, ExportButton } from "../components/ui";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import UserContext from "../UserContext";
 import { AISearch } from "./components/AISearch";
 import { PeopleBulkActions } from "./components/bulk/PeopleBulkActions";
 import { type BulkResult } from "./components/bulk/BulkFieldDialog";
@@ -77,6 +78,8 @@ const formatHeader = (key: string): string => {
 };
 
 export const PeoplePage = memo(() => {
+  const context = React.useContext(UserContext);
+  const churchId = context?.userChurch?.church?.id || "";
   const [searchResults, setSearchResults] = React.useState<PersonInterface[] | null>(null);
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>(["photo", "displayName"]);
   const [isSearchPerformed, setIsSearchPerformed] = React.useState(false);
@@ -95,6 +98,8 @@ export const PeoplePage = memo(() => {
   const [loadAll, setLoadAll] = React.useState(false);
   const [allPeople, setAllPeople] = React.useState<PersonInterface[]>([]);
   const [maybeMore, setMaybeMore] = React.useState(true);
+  const [isFetchingPeople, setIsFetchingPeople] = React.useState(false);
+  const [fetchTick, setFetchTick] = React.useState(0);
   const [toast, setToast] = React.useState<{ open: boolean; message: string; severity: "success" | "error" }>({
     open: false,
     message: "",
@@ -103,14 +108,9 @@ export const PeoplePage = memo(() => {
   const canEdit = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
   const currentPersonId = UserHelper.currentUserChurch?.person?.id || "";
 
-  const peopleQuery = useQuery<PersonInterface[]>({
-    queryKey: [loadAll ? "/people/list" : `/people/list?pageSize=${INITIAL_PAGE_SIZE}`, "MembershipApi"],
-    placeholderData: []
-  });
-
   const refetch = useCallback(() => {
-    peopleQuery.refetch();
-  }, [peopleQuery]);
+    setFetchTick((t) => t + 1);
+  }, []);
 
   const columns = [
     { key: "photo", label: Locale.label("people.peoplePage.photo"), shortName: "" },
@@ -154,13 +154,16 @@ export const PeoplePage = memo(() => {
   }, []);
 
   React.useEffect(() => {
-    if (peopleQuery.isPlaceholderData) return;
-    const data = peopleQuery.data;
-    if (!data) return;
-    const expanded = data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d));
-    setAllPeople(expanded);
-    setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
-  }, [peopleQuery.data, peopleQuery.isPlaceholderData, loadAll]);
+    if (!churchId || !ApiHelper.isAuthenticated) return;
+    const url = loadAll ? "/people" : `/people?pageSize=${INITIAL_PAGE_SIZE}`;
+    setIsFetchingPeople(true);
+    ApiHelper.get(url, "MembershipApi").then((data: any) => {
+      if (Array.isArray(data)) {
+        setAllPeople(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        setMaybeMore(!loadAll && data.length === INITIAL_PAGE_SIZE);
+      }
+    }).finally(() => setIsFetchingPeople(false));
+  }, [churchId, loadAll, fetchTick]);
 
   const resetSearchResults = useCallback(() => {
     setSearchResults(allPeople);
@@ -169,9 +172,9 @@ export const PeoplePage = memo(() => {
 
   React.useEffect(() => {
     if (isSearchPerformed) return;
-    if (allPeople.length === 0 && peopleQuery.isFetching) return;
+    if (allPeople.length === 0 && isFetchingPeople) return;
     setSearchResults(allPeople);
-  }, [allPeople, isSearchPerformed, peopleQuery.isFetching]);
+  }, [allPeople, isSearchPerformed, isFetchingPeople]);
 
   const handleShowAll = useCallback(() => {
     setLoadAll(true);
@@ -188,13 +191,15 @@ export const PeoplePage = memo(() => {
       setSaveableCriteria(null);
       setSelectedListFilters(undefined);
       ApiHelper.get(`/lists/${list.id}/people`, "MembershipApi").then((data: any) => {
-        setSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        setSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else if (Array.isArray(conditions)) {
       setSaveableCriteria(conditions);
       setSelectedListFilters(undefined);
       ApiHelper.post("/people/advancedSearch", conditions, "MembershipApi").then((data: any) => {
-        setSearchResults(data.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
+        const arr = Array.isArray(data) ? data : [];
+        setSearchResults(arr.map((d: PersonInterface) => B1AdminPersonHelper.getExpandedPersonObject(d)));
       });
     } else {
       // Advanced list: seed the advanced panel (new ref each time so re-selecting re-seeds).
@@ -356,7 +361,7 @@ export const PeoplePage = memo(() => {
             ? isSearchPerformed
               ? Locale.label("people.peoplePage.peopleFound").replace("{count}", searchResults.length.toString())
               : Locale.label("people.peoplePage.showingMembers").replace("{count}", searchResults.length.toString())
-            : peopleQuery.isLoading
+            : isFetchingPeople
               ? Locale.label("people.peoplePage.loading")
               : Locale.label("people.peoplePage.noPeopleFound")
         }>
@@ -472,7 +477,7 @@ export const PeoplePage = memo(() => {
                 />
                 {!isSearchPerformed && !loadAll && maybeMore && allPeople.length > 0 && (
                   <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                    <Button variant="outlined" onClick={handleShowAll} disabled={peopleQuery.isFetching} startIcon={peopleQuery.isFetching ? <CircularProgress size={16} /> : null}>
+                    <Button variant="outlined" onClick={handleShowAll} disabled={isFetchingPeople} startIcon={isFetchingPeople ? <CircularProgress size={16} /> : null}>
                       {Locale.label("people.peoplePage.showAll")}
                     </Button>
                   </Box>

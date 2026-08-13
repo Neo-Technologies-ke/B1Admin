@@ -20,6 +20,7 @@ const ICON_FOR_LINK_TYPE: Record<string, string> = {
   plans: "assignment",
   volunteer: "volunteer_activism",
   checkin: "how_to_reg",
+  calendar: "calendar_month",
   page: "description",
   url: "link"
 };

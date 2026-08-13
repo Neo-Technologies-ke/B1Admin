@@ -58,7 +58,7 @@ export const DemographicsPage = memo(() => {
       <GlobalStyles styles={googleChartTooltipStyles} />
       <PageHeader
         title={Locale.label("people.demographics.title")}
-        subtitle={data ? `${Locale.label("people.demographics.total")}: ${data.total.toLocaleString()}` : Locale.label("people.demographics.subtitle")}>
+        subtitle={data?.total != null ? `${Locale.label("people.demographics.total")}: ${data.total.toLocaleString()}` : Locale.label("people.demographics.subtitle")}>
         <BarChartIcon sx={{ fontSize: 32, color: "rgba(255,255,255,0.8)", mr: 2 }} />
       </PageHeader>
 
@@ -67,18 +67,26 @@ export const DemographicsPage = memo(() => {
           <Loading />
         ) : data ? (
           <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <AgeChart title={Locale.label("people.demographics.age")} data={data.ageGroups} onSelect={drillToAge} />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <DonutChart title={Locale.label("people.demographics.membershipStatus")} data={data.membershipStatus} onSelect={drillToField("membershipStatus")} />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <DonutChart title={Locale.label("people.demographics.gender")} data={data.gender} onSelect={drillToField("gender")} />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <DonutChart title={Locale.label("people.demographics.maritalStatus")} data={data.maritalStatus} onSelect={drillToField("maritalStatus")} />
-            </Grid>
+            {data.ageGroups && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <AgeChart title={Locale.label("people.demographics.age")} data={data.ageGroups} onSelect={drillToAge} />
+              </Grid>
+            )}
+            {data.membershipStatus && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <DonutChart title={Locale.label("people.demographics.membershipStatus")} data={data.membershipStatus} onSelect={drillToField("membershipStatus")} />
+              </Grid>
+            )}
+            {data.gender && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <DonutChart title={Locale.label("people.demographics.gender")} data={data.gender} onSelect={drillToField("gender")} />
+              </Grid>
+            )}
+            {data.maritalStatus && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <DonutChart title={Locale.label("people.demographics.maritalStatus")} data={data.maritalStatus} onSelect={drillToField("maritalStatus")} />
+              </Grid>
+            )}
             {data.campus && data.campus.length > 0 && (
               <Grid size={{ xs: 12, md: 6 }}>
                 <DonutChart title={Locale.label("people.demographics.campus")} data={data.campus.map((c) => ({ name: c.name, count: c.count }))} onSelect={drillToCampus} />

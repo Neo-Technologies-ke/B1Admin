@@ -191,6 +191,7 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
                       <MenuItem value="lessons">{Locale.label("settings.appEdit.lessons")}</MenuItem>
                       <MenuItem value="volunteer">{Locale.label("settings.appEdit.volunteerOpportunities")}</MenuItem>
                       <MenuItem value="plans">{Locale.label("settings.appEdit.plans")}</MenuItem>
+                      <MenuItem value="calendar">{Locale.label("settings.appEdit.calendar")}</MenuItem>
                       <MenuItem value="url">{Locale.label("settings.appEdit.externalUrl")}</MenuItem>
                       <MenuItem value="page">{Locale.label("settings.appEdit.internalPage")}</MenuItem>
                     </Select>
@@ -200,6 +201,22 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
 
               {linkType === "url" && (
                 <TextField fullWidth label={Locale.label("settings.appEdit.url")} type="url" helperText={Locale.label("settings.app.urlHelper")} {...register("url")} />
+              )}
+
+              {linkType === "calendar" && (
+                <Controller
+                  control={control}
+                  name="linkData"
+                  render={({ field }) => (
+                    <FormControl fullWidth>
+                      <InputLabel id="calendarScope">{Locale.label("settings.appEdit.calendarScope")}</InputLabel>
+                      <Select {...field} value={field.value || "church"} labelId="calendarScope" label={Locale.label("settings.appEdit.calendarScope")}>
+                        <MenuItem value="church">{Locale.label("settings.appEdit.calendarChurchWide")}</MenuItem>
+                        <MenuItem value="myGroups">{Locale.label("settings.appEdit.calendarMyGroups")}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  )}
+                />
               )}
 
               {getPage()}

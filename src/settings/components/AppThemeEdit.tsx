@@ -20,21 +20,21 @@ export interface AppThemeConfig {
 }
 
 const DEFAULT_LIGHT: AppThemeModeColors = {
-  background: "#F6F6F8",
+  background: "#F8F9FA",
   surface: "#FFFFFF",
-  primary: "#0D47A1",
+  primary: "#6B46C1",
   primaryContrast: "#FFFFFF",
-  secondary: "#568BDA",
-  textColor: "#3c3c3c"
+  secondary: "#10B981",
+  textColor: "#1F2937"
 };
 
 const DEFAULT_DARK: AppThemeModeColors = {
-  background: "#121212",
-  surface: "#1E1E1E",
-  primary: "#0D47A1",
+  background: "#0F172A",
+  surface: "#1E293B",
+  primary: "#8B5CF6",
   primaryContrast: "#FFFFFF",
-  secondary: "#568BDA",
-  textColor: "#FFFFFF"
+  secondary: "#34D399",
+  textColor: "#F1F5F9"
 };
 
 const DEFAULT_THEME: AppThemeConfig = { light: DEFAULT_LIGHT, dark: DEFAULT_DARK };

@@ -7,6 +7,7 @@ import { type ConflictInterface, type EventTemplateInterface, type ResourceInter
 interface Props {
   churchId: string;
   curatedCalendarId?: string;
+  eventId?: string;
   initialRoomId?: string;
   initialResourceId?: string;
   onDone: (saved: boolean) => void;
@@ -60,6 +61,24 @@ export function NewEventModal(props: Props) {
     ApiHelper.get("/rooms", "ContentApi").then(setRooms);
     ApiHelper.get("/resources", "ContentApi").then(setResources);
   }, []);
+
+  useEffect(() => {
+    if (props.eventId) {
+      ApiHelper.get("/events/" + props.eventId, "ContentApi").then((data: EventInterface) => {
+        if (data.groupId) setGroupId(data.groupId);
+        if (data.title) setTitle(data.title);
+        if (data.description) setDescription(data.description);
+        if (data.start) setStart(toInputValue(new Date(data.start)));
+        if (data.end) setEnd(toInputValue(new Date(data.end)));
+        if (data.visibility) setVisibility(data.visibility);
+        if (data.recurrenceRule) {
+          if (data.recurrenceRule.includes("DAILY")) setRecurrence("daily");
+          else if (data.recurrenceRule.includes("WEEKLY")) setRecurrence("weekly");
+          else if (data.recurrenceRule.includes("MONTHLY")) setRecurrence("monthly");
+        }
+      });
+    }
+  }, [props.eventId]);
 
   const getRecurrenceRule = () => {
     if (!recurrence || !start) return undefined;
@@ -116,8 +135,9 @@ export function NewEventModal(props: Props) {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const eventGroupId = groupId === "whole_church" ? undefined : groupId;
       const event: EventInterface = {
-        groupId,
+        groupId: eventGroupId,
         title,
         description,
         start: new Date(start),
@@ -126,8 +146,18 @@ export function NewEventModal(props: Props) {
         visibility,
         recurrenceRule: getRecurrenceRule()
       } as EventInterface;
-      const savedEvents = await ApiHelper.post("/events", [event], "ContentApi");
-      const eventId = savedEvents[0].id;
+      
+      let eventId: string;
+      if (props.eventId) {
+        // Update existing event
+        await ApiHelper.put("/events/" + props.eventId, event, "ContentApi");
+        eventId = props.eventId;
+      } else {
+        // Create new event
+        const savedEvents = await ApiHelper.post("/events", [event], "ContentApi");
+        eventId = savedEvents[0].id;
+      }
+      
       const window = customWindow && windowStart && windowEnd
         ? { startTime: new Date(windowStart), endTime: new Date(windowEnd) }
         : { setupMinutes: toInt(setupMinutes) || undefined, teardownMinutes: toInt(teardownMinutes) || undefined };
@@ -136,21 +166,22 @@ export function NewEventModal(props: Props) {
         ...resourceIds.map((resourceId) => ({ eventId, resourceId, quantity: 1, ...window }))
       ];
       if (bookings.length > 0) await ApiHelper.post("/eventBookings", bookings, "ContentApi");
-      if (props.curatedCalendarId) await ApiHelper.post("/curatedEvents", [{ curatedCalendarId: props.curatedCalendarId, groupId, eventIds: [eventId] }], "ContentApi");
+      if (props.curatedCalendarId && !props.eventId) await ApiHelper.post("/curatedEvents", [{ curatedCalendarId: props.curatedCalendarId, groupId: eventGroupId, eventIds: [eventId] }], "ContentApi");
       props.onDone(true);
     } catch {
       setSaving(false);
     }
   };
 
-  const valid = groupId && title.trim() && start && end && new Date(end) > new Date(start);
+  const valid = title.trim() && start && end && new Date(end) > new Date(start);
 
   return (
     <Dialog open={true} onClose={() => props.onDone(false)} fullWidth scroll="body">
-      <DialogTitle>{Locale.label("calendars.newEvent.title")}</DialogTitle>
+      <DialogTitle>{props.eventId ? Locale.label("common.edit") + " " + Locale.label("calendars.newEvent.title") : Locale.label("calendars.newEvent.title")}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField fullWidth select label={Locale.label("calendars.newEvent.group")} value={groupId} onChange={(e) => setGroupId(e.target.value)} data-testid="new-event-group-select">
+            <MenuItem value="whole_church">{Locale.label("calendars.newEvent.wholeChurch")}</MenuItem>
             {groups.map((g) => <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)}
           </TextField>
           {templates.length > 0 && (

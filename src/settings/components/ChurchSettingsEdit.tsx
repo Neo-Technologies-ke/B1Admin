@@ -15,6 +15,9 @@ import { DomainSettingsEdit } from "./DomainSettingsEdit";
 import { TextingSettingsEdit } from "./TextingSettingsEdit";
 import { SupportContactSettingsEdit } from "./SupportContactSettingsEdit";
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
+import { ChurchBrandingEdit } from "./ChurchBrandingEdit";
+import { VisbilityPrefSettingsEdit } from "./VisibilityPrefSettingsEdit";
+import PeopleIcon from "@mui/icons-material/People";
 
 // ChurchInterface has typed fields; RHF nested paths require looser typing
 type AnyRecord = Record<string, any>;
@@ -159,6 +162,25 @@ export const ChurchSettingsEdit: React.FC<Props> = (props) => {
         </AccordionDetails>
       </Accordion>
 
+      {/* Branding & Theme Accordion */}
+      <Accordion
+        expanded={expanded === "branding"}
+        onChange={handleAccordionChange("branding")}
+        sx={accordionStyles}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={accordionSummaryStyles}>
+          <SettingsSectionHeader
+            icon={<BusinessIcon />}
+            color="primary"
+            title="Branding & Theme"
+            subtitle="Customize your church's colors and logo"
+          />
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 2 }}>
+          <ChurchBrandingEdit churchId={church?.id || ""} saveTrigger={saveTrigger} />
+        </AccordionDetails>
+      </Accordion>
+
       {/* Giving Settings Accordion */}
       {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
         <Accordion expanded={expanded === "giving"} onChange={handleAccordionChange("giving")} sx={accordionStyles}>
@@ -179,6 +201,18 @@ export const ChurchSettingsEdit: React.FC<Props> = (props) => {
           </AccordionSummary>
           <AccordionDetails sx={{ pt: 2 }}>
             <TextingSettingsEdit churchId={props.church?.id || ""} saveTrigger={saveTrigger} onError={handleTextingError} />
+          </AccordionDetails>
+        </Accordion>
+      )}
+
+      {/* People & Privacy Accordion */}
+      {UserHelper.checkAccess(Permissions.membershipApi.settings.edit) && (
+        <Accordion expanded={expanded === "privacy"} onChange={handleAccordionChange("privacy")} sx={accordionStyles}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={accordionSummaryStyles}>
+            <SettingsSectionHeader icon={<PeopleIcon />} color="primary" title="People & Privacy" subtitle="Control what member contact information is visible to others" />
+          </AccordionSummary>
+          <AccordionDetails sx={{ pt: 2 }}>
+            <VisbilityPrefSettingsEdit churchId={props.church?.id || ""} saveTrigger={saveTrigger} />
           </AccordionDetails>
         </Accordion>
       )}
