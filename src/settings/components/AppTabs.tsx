@@ -122,7 +122,7 @@ export function AppTabs({ onSelected = () => {}, refreshKey = 0 }: Props) {
           }
           secondary={
             <Typography variant="body2" color="text.secondary">
-              {tab.linkType === "url" ? tab.url : tab.linkType}
+              {(tab.linkType === "url" || tab.linkType === "vivaEngage") ? tab.url : tab.linkType}
             </Typography>
           }
           slotProps={{

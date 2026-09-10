@@ -22,6 +22,7 @@ interface Props {
 }
 
 type AnyRecord = Record<string, any>;
+const DEFAULT_VIVA_ENGAGE_URL = "https://engage.cloud.microsoft/";
 
 export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () => {} }: Props) {
   const [icon, setIcon] = useState<string>("");
@@ -63,7 +64,7 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
       (t as any).visibility = values.visibility;
       (t as any).photo = photo;
       (t as any).groupIds = values.visibility === "groups" ? (groupIdsJson || null) : null;
-      if (t.linkType !== "url" && t.linkType !== "page") t.url = "";
+      if (t.linkType !== "url" && t.linkType !== "page" && t.linkType !== "vivaEngage") t.url = "";
       await ApiHelper.post("/links", [t], "ContentApi");
       updatedFunction();
     } finally {
@@ -111,6 +112,12 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
       setValue("linkData", pages[0]?.id || "");
     }
   }, [linkType, pages, setValue, watch]);
+
+  useEffect(() => {
+    if (linkType === "vivaEngage" && !watch("url")) {
+      setValue("url", DEFAULT_VIVA_ENGAGE_URL);
+    }
+  }, [linkType, setValue, watch]);
 
   const onPageChange = (id: string) => {
     setValue("linkData", id);
@@ -192,6 +199,7 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
                       <MenuItem value="volunteer">{Locale.label("settings.appEdit.volunteerOpportunities")}</MenuItem>
                       <MenuItem value="plans">{Locale.label("settings.appEdit.plans")}</MenuItem>
                       <MenuItem value="calendar">{Locale.label("settings.appEdit.calendar")}</MenuItem>
+                      <MenuItem value="vivaEngage">{Locale.label("settings.appEdit.vivaEngage")}</MenuItem>
                       <MenuItem value="url">{Locale.label("settings.appEdit.externalUrl")}</MenuItem>
                       <MenuItem value="page">{Locale.label("settings.appEdit.internalPage")}</MenuItem>
                     </Select>
@@ -199,7 +207,7 @@ export function AppEdit({ currentTab: currentTabFromProps, updatedFunction = () 
                 )}
               />
 
-              {linkType === "url" && (
+              {(linkType === "url" || linkType === "vivaEngage") && (
                 <TextField fullWidth label={Locale.label("settings.appEdit.url")} type="url" helperText={Locale.label("settings.app.urlHelper")} {...register("url")} />
               )}
 

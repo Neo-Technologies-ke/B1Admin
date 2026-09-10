@@ -21,6 +21,7 @@ const ICON_FOR_LINK_TYPE: Record<string, string> = {
   volunteer: "volunteer_activism",
   checkin: "how_to_reg",
   calendar: "calendar_month",
+  vivaEngage: "forum",
   page: "description",
   url: "link"
 };
