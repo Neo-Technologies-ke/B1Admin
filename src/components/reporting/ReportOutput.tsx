@@ -34,9 +34,24 @@ export const ReportOutput = (props: Props) => {
   const isMounted = useMountedState();
 
   React.useEffect(() => {
-    CurrencyHelper.loadCurrency().then((result) => {
-      if (result && isMounted()) setCurrency(result);
-    });
+    const loadDisplayCurrency = async () => {
+      try {
+        const gateways = await ApiHelper.get("/gateways", "GivingApi");
+        const gatewayCurrency = Array.isArray(gateways) && gateways[0]?.currency ? String(gateways[0].currency).toLowerCase() : "";
+        if (gatewayCurrency) {
+          if (isMounted()) setCurrency(gatewayCurrency);
+          return;
+        }
+      } catch {
+        // Fall back to existing helper if gateway lookup is unavailable.
+      }
+
+      CurrencyHelper.loadCurrency().then((result) => {
+        if (result && isMounted()) setCurrency(result);
+      });
+    };
+
+    loadDisplayCurrency();
   }, [isMounted]);
 
   const handlePrint = useReactToPrint({ contentRef });

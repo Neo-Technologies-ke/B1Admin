@@ -32,6 +32,12 @@ const stripeCurrencyFees = {
   brl: { percent: 3.9, fixed: 0.5, symbol: "R$" }
 };
 
+const getCurrencySymbol = (currency: string) => {
+  const key = (currency || "usd").toLowerCase() as keyof typeof stripeCurrencyFees;
+  const known = stripeCurrencyFees[key];
+  return known?.symbol || currency.toUpperCase() + " ";
+};
+
 export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
   const [flatRateCC, setFlatRateCC] = React.useState<GenericSettingInterface>(null);
   const [transFeeCC, setTransFeeCC] = React.useState<GenericSettingInterface>(null);
@@ -92,8 +98,7 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
 
     reset(next);
     setLoadedCurrency(currentCurrency);
-    const fees = stripeCurrencyFees[currentCurrency as keyof typeof stripeCurrencyFees];
-    if (fees) setSymbol(fees.symbol);
+    setSymbol(getCurrencySymbol(currentCurrency));
     setHasLoadedData(true);
   };
 
@@ -145,10 +150,10 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
   React.useEffect(() => {
     if (!hasLoadedData) return;
     const currentCurrency = (props.currency || "usd").toLowerCase();
+    // Always keep the symbol in sync — loadData can run before the real currency propagates.
+    setSymbol(getCurrencySymbol(currentCurrency));
     const fees = stripeCurrencyFees[currentCurrency as keyof typeof stripeCurrencyFees];
     if (!fees) return;
-    // Always keep the symbol in sync — loadData can run before the real currency propagates.
-    setSymbol(fees.symbol);
     if (currentCurrency === loadedCurrency) return;
     setLoadedCurrency(currentCurrency);
     // Re-default ONLY unsaved fees so the stale-USD default is corrected once the real currency
