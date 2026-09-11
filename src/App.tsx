@@ -13,6 +13,7 @@ import "@churchapps/apphelper/dist/markdown/components/markdownEditor/editor.css
 import { EnvironmentHelper } from "./helpers";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
+import "./helpers/kesCurrencyPatch";
 // Registers the Paystack payment provider with the shared donations registry so it
 // shows up in Settings > Giving and the donation forms regardless of which page loads first.
 import "./donationComponents/components/PaystackProvider";
