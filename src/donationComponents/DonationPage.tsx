@@ -6,6 +6,7 @@ import type { Stripe } from "@stripe/stripe-js";
 import { DisplayBox, ExportLink, Loading } from "@churchapps/apphelper";
 import { MultiGatewayDonationForm, RecurringDonations, PaymentMethods, StripePaymentMethod, DonationHelper, getPaymentProvider } from "@churchapps/apphelper/donations";
 import type { PaymentGateway } from "@churchapps/apphelper/donations";
+import "./components/PaystackProvider";
 import { ApiHelper, DateHelper, UniqueIdHelper, CurrencyHelper, Locale } from "../helpers";
 import type { DonationInterface, PersonInterface, ChurchInterface } from "@churchapps/helpers";
 // import { Link } from "react-router-dom"

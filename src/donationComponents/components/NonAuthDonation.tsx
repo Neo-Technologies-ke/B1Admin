@@ -3,6 +3,7 @@
 import React from "react";
 import { NonAuthDonation as SharedNonAuthDonation } from "@churchapps/apphelper/donations";
 import type { PaperProps } from "@mui/material/Paper";
+import "./PaystackProvider";
 
 interface Props {
   churchId: string;

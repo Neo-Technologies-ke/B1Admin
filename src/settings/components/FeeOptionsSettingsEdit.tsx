@@ -41,16 +41,18 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
   const [transFeePayPal, setTransFeePayPal] = React.useState<GenericSettingInterface>(null);
   const [flatRateKF, setFlatRateKF] = React.useState<GenericSettingInterface>(null);
   const [transFeeKF, setTransFeeKF] = React.useState<GenericSettingInterface>(null);
+  const [flatRatePaystack, setFlatRatePaystack] = React.useState<GenericSettingInterface>(null);
+  const [transFeePaystack, setTransFeePaystack] = React.useState<GenericSettingInterface>(null);
   const [symbol, setSymbol] = React.useState("$");
   const [loadedCurrency, setLoadedCurrency] = React.useState("usd");
   const [hasLoadedData, setHasLoadedData] = React.useState(false);
 
-  const { register, reset, getValues, setValue } = useForm<AnyRecord>({ defaultValues: { flatRateCC: "0.30", transFeeCC: "2.9", flatRateACH: "0.8", hardLimitACH: "5", flatRatePayPal: "0.30", transFeePayPal: "2.9", flatRateKF: "0.30", transFeeKF: "2.9" } });
+  const { register, reset, getValues, setValue } = useForm<AnyRecord>({ defaultValues: { flatRateCC: "0.30", transFeeCC: "2.9", flatRateACH: "0.8", hardLimitACH: "5", flatRatePayPal: "0.30", transFeePayPal: "2.9", flatRateKF: "0.30", transFeeKF: "2.9", flatRatePaystack: "0.00", transFeePaystack: "2.9" } });
 
   const loadData = async () => {
     const currentCurrency = (props.currency || "usd").toLowerCase();
     const allSettings: GenericSettingInterface[] = await ApiHelper.get("/settings", "MembershipApi");
-    const next = { flatRateCC: "0.30", transFeeCC: "2.9", flatRateACH: "0.8", hardLimitACH: "5", flatRatePayPal: "0.30", transFeePayPal: "2.9", flatRateKF: "0.30", transFeeKF: "2.9" };
+    const next = { flatRateCC: "0.30", transFeeCC: "2.9", flatRateACH: "0.8", hardLimitACH: "5", flatRatePayPal: "0.30", transFeePayPal: "2.9", flatRateKF: "0.30", transFeeKF: "2.9", flatRatePaystack: "0.00", transFeePaystack: "2.9" };
 
     const creditCardFlatRate = allSettings.filter((s) => s.keyName === "flatRateCC");
     if (creditCardFlatRate.length > 0) { setFlatRateCC(creditCardFlatRate[0]); next.flatRateCC = creditCardFlatRate[0].value; } else {
@@ -81,6 +83,12 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
 
     const kfTransactionFee = allSettings.filter((s) => s.keyName === "transFeeKF");
     if (kfTransactionFee.length > 0) { setTransFeeKF(kfTransactionFee[0]); next.transFeeKF = kfTransactionFee[0].value; }
+
+    const paystackFlatRate = allSettings.filter((s) => s.keyName === "flatRatePaystack");
+    if (paystackFlatRate.length > 0) { setFlatRatePaystack(paystackFlatRate[0]); next.flatRatePaystack = paystackFlatRate[0].value; }
+
+    const paystackTransactionFee = allSettings.filter((s) => s.keyName === "transFeePaystack");
+    if (paystackTransactionFee.length > 0) { setTransFeePaystack(paystackTransactionFee[0]); next.transFeePaystack = paystackTransactionFee[0].value; }
 
     reset(next);
     setLoadedCurrency(currentCurrency);
@@ -115,8 +123,14 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
     const transFeeKFSett: GenericSettingInterface = transFeeKF === null ? { churchId: props.churchId, public: 1, keyName: "transFeeKF" } : transFeeKF;
     transFeeKFSett.value = values.transFeeKF;
 
+    const flatRatePaystackSett: GenericSettingInterface = flatRatePaystack === null ? { churchId: props.churchId, public: 1, keyName: "flatRatePaystack" } : flatRatePaystack;
+    flatRatePaystackSett.value = values.flatRatePaystack;
+
+    const transFeePaystackSett: GenericSettingInterface = transFeePaystack === null ? { churchId: props.churchId, public: 1, keyName: "transFeePaystack" } : transFeePaystack;
+    transFeePaystackSett.value = values.transFeePaystack;
+
     ApiHelper.post("/settings", [
-      flatRateCCSett, transFeeCCSett, flatRateACHSett, hardLimitACHSett, flatRatePayPalSett, transFeePayPalSett, flatRateKFSett, transFeeKFSett
+      flatRateCCSett, transFeeCCSett, flatRateACHSett, hardLimitACHSett, flatRatePayPalSett, transFeePayPalSett, flatRateKFSett, transFeeKFSett, flatRatePaystackSett, transFeePaystackSett
     ], "MembershipApi");
   };
 
@@ -147,6 +161,7 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
   const showStripeFields = feeFields.includes("card");
   const showPayPalFields = feeFields.includes("paypal");
   const showKFFields = feeFields.includes("kf");
+  const showPaystackFields = feeFields.includes("paystack");
   const currentCurrency = (props.currency || "usd").toLowerCase();
   const showACHFields = currentCurrency === "usd";
 
@@ -189,6 +204,16 @@ export const FeeOptionsSettingsEdit: React.FC<Props> = (props) => {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField fullWidth margin="dense" type="number" label={Locale.label("settings.feeOptionsSettings.kfTransactionFee")} InputProps={{ endAdornment: <Icon fontSize="small">percent</Icon> }} {...register("transFeeKF")} />
+          </Grid>
+        </>
+      )}
+      {showPaystackFields && (
+        <>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth margin="dense" type="number" label="Paystack Card Flat Rate" slotProps={{ input: { startAdornment: <InputAdornment position="start">{symbol}</InputAdornment> } }} {...register("flatRatePaystack")} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField fullWidth margin="dense" type="number" label="Paystack Card Transaction Fee" InputProps={{ endAdornment: <Icon fontSize="small">percent</Icon> }} {...register("transFeePaystack")} />
           </Grid>
         </>
       )}
