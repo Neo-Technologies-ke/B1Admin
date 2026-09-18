@@ -49,6 +49,13 @@ export function DisplayCalendarEventModal(props: Props) {
     }
   };
 
+  const handleDeleteEvent = async () => {
+    if (!props.event.eventId || !confirm("Permanently delete this event for everyone?")) return;
+    await ApiHelper.delete("/curatedEvents/calendar/" + props.curatedCalendarId + "/event/" + props.event.eventId, "ContentApi");
+    await ApiHelper.delete("/events/" + props.event.eventId, "ContentApi");
+    if (props.onDone) props.onDone();
+  };
+
   const renderDescription = () => {
     if (!props.event.description) return null;
 
@@ -87,8 +94,13 @@ export function DisplayCalendarEventModal(props: Props) {
           </Button>
         )}
         {props.event.id && props.mode === "edit" && (
-          <Button variant="contained" onClick={handleDelete} data-testid="calendar-event-delete-button">
-            {Locale.label("calendars.calendarEvent.delete")}
+          <Button variant="outlined" color="error" onClick={handleDelete} data-testid="calendar-event-remove-button">
+            Remove from Calendar
+          </Button>
+        )}
+        {props.event.eventId && props.mode === "edit" && (
+          <Button variant="contained" color="error" onClick={handleDeleteEvent} data-testid="calendar-event-delete-button">
+            Delete Event
           </Button>
         )}
       </DialogActions>

@@ -22,6 +22,8 @@ interface Props {
 
 export function CuratedEventCalendar(props: Props) {
   const [open, setOpen] = useState<boolean>(false);
+  const [showAddSource, setShowAddSource] = useState(false);
+  const [newEventStart, setNewEventStart] = useState<Date | undefined>();
   const [displayCalendarEvent, setDisplayCalendarEvent] = useState<CuratedEventWithEventInterface | null>(null);
   const [showCopy, setShowCopy] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -61,6 +63,14 @@ export function CuratedEventCalendar(props: Props) {
   const handleEventClick = (event: CuratedEventWithEventInterface) => {
     const ev = { ...event };
     setDisplayCalendarEvent(ev);
+  };
+
+  const handleSlotClick = (slot: { start: Date }) => {
+    if (props.mode !== "edit") return;
+    const start = new Date(slot.start);
+    if (start.getHours() === 0 && start.getMinutes() === 0) start.setHours(9);
+    setNewEventStart(start);
+    setOpen(true);
   };
 
   const handleDone = () => {
@@ -126,7 +136,7 @@ export function CuratedEventCalendar(props: Props) {
             intent="add"
             label={Locale.label("common.add")}
             icon={<AddIcon />}
-            onClick={() => setOpen(true)}
+            onClick={() => setShowAddSource(true)}
             data-testid="calendar-add-event-button"
           />
         )}
@@ -137,10 +147,25 @@ export function CuratedEventCalendar(props: Props) {
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
+        selectable={props.mode === "edit"}
+        onSelectSlot={handleSlotClick}
         onSelectEvent={handleEventClick}
+        popup
       />
       {open && props.mode === "edit" && (
-        <EditCalendarEventModal onDone={handleDone} churchId={props.churchId} curatedCalendarId={props.curatedCalendarId} />
+        <NewEventModal
+          initialStart={newEventStart}
+          churchId={props.churchId}
+          curatedCalendarId={props.curatedCalendarId}
+          onDone={(saved) => {
+            setOpen(false);
+            setNewEventStart(undefined);
+            if (saved && props.onRequestRefresh) props.onRequestRefresh();
+          }}
+        />
+      )}
+      {showAddSource && props.mode === "edit" && (
+        <EditCalendarEventModal onDone={() => { setShowAddSource(false); handleDone(); }} churchId={props.churchId} curatedCalendarId={props.curatedCalendarId} />
       )}
       {displayCalendarEvent && (
         <DisplayCalendarEventModal event={displayCalendarEvent} curatedCalendarId={props.curatedCalendarId} mode={props.mode} onDone={handleDone} />

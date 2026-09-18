@@ -10,6 +10,7 @@ interface Props {
   eventId?: string;
   initialRoomId?: string;
   initialResourceId?: string;
+  initialStart?: Date;
   onDone: (saved: boolean) => void;
 }
 
@@ -25,12 +26,14 @@ export function NewEventModal(props: Props) {
   const [templates, setTemplates] = useState<EventTemplateInterface[]>([]);
   const [rooms, setRooms] = useState<RoomInterface[]>([]);
   const [resources, setResources] = useState<ResourceInterface[]>([]);
-  const [groupId, setGroupId] = useState("");
+  const initialStart = props.initialStart || new Date();
+  const initialEnd = new Date(initialStart.getTime() + 60 * 60 * 1000);
+  const [groupId, setGroupId] = useState("whole_church");
   const [templateId, setTemplateId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
+  const [start, setStart] = useState(toInputValue(initialStart));
+  const [end, setEnd] = useState(toInputValue(initialEnd));
   const [recurrence, setRecurrence] = useState("");
   const [visibility, setVisibility] = useState("public");
   const [roomIds, setRoomIds] = useState<string[]>(props.initialRoomId ? [props.initialRoomId] : []);
@@ -42,6 +45,7 @@ export function NewEventModal(props: Props) {
   const [windowStart, setWindowStart] = useState("");
   const [windowEnd, setWindowEnd] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const toInt = (v: string) => (v.trim() ? parseInt(v, 10) || 0 : 0);
 
@@ -134,6 +138,7 @@ export function NewEventModal(props: Props) {
 
   const handleSave = async () => {
     setSaving(true);
+    setError("");
     try {
       const eventGroupId = groupId === "whole_church" ? undefined : groupId;
       const event: EventInterface = {
@@ -146,7 +151,7 @@ export function NewEventModal(props: Props) {
         visibility,
         recurrenceRule: getRecurrenceRule()
       } as EventInterface;
-      
+
       let eventId: string;
       if (props.eventId) {
         // Update existing event
@@ -157,7 +162,7 @@ export function NewEventModal(props: Props) {
         const savedEvents = await ApiHelper.post("/events", [event], "ContentApi");
         eventId = savedEvents[0].id;
       }
-      
+
       const window = customWindow && windowStart && windowEnd
         ? { startTime: new Date(windowStart), endTime: new Date(windowEnd) }
         : { setupMinutes: toInt(setupMinutes) || undefined, teardownMinutes: toInt(teardownMinutes) || undefined };
@@ -168,7 +173,9 @@ export function NewEventModal(props: Props) {
       if (bookings.length > 0) await ApiHelper.post("/eventBookings", bookings, "ContentApi");
       if (props.curatedCalendarId && !props.eventId) await ApiHelper.post("/curatedEvents", [{ curatedCalendarId: props.curatedCalendarId, groupId: eventGroupId, eventIds: [eventId] }], "ContentApi");
       props.onDone(true);
-    } catch {
+    } catch (saveError: any) {
+      setError(saveError?.message || "Unable to save the calendar event.");
+    } finally {
       setSaving(false);
     }
   };
@@ -180,6 +187,7 @@ export function NewEventModal(props: Props) {
       <DialogTitle>{props.eventId ? Locale.label("common.edit") + " " + Locale.label("calendars.newEvent.title") : Locale.label("calendars.newEvent.title")}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
+          {error && <Alert severity="error">{error}</Alert>}
           <TextField fullWidth select label={Locale.label("calendars.newEvent.group")} value={groupId} onChange={(e) => setGroupId(e.target.value)} data-testid="new-event-group-select">
             <MenuItem value="whole_church">{Locale.label("calendars.newEvent.wholeChurch")}</MenuItem>
             {groups.map((g) => <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)}
