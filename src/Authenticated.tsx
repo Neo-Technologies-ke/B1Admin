@@ -60,6 +60,7 @@ const CalendarPage = React.lazy(() => import("./calendars/CalendarPage").then((m
 const RoomsResourcesPage = React.lazy(() => import("./calendars/RoomsResourcesPage").then((module) => ({ default: module.RoomsResourcesPage })));
 const ApprovalsPage = React.lazy(() => import("./calendars/ApprovalsPage").then((module) => ({ default: module.ApprovalsPage })));
 const AvailabilityPage = React.lazy(() => import("./calendars/AvailabilityPage").then((module) => ({ default: module.AvailabilityPage })));
+const AppointmentsPage = React.lazy(() => import("./calendars/AppointmentsPage").then((module) => ({ default: module.AppointmentsPage })));
 const RegistrationsPage = React.lazy(() => import("./registrations/RegistrationsPage").then((module) => ({ default: module.RegistrationsPage })));
 const RegistrationDetailsPage = React.lazy(() => import("./registrations/RegistrationDetailsPage").then((module) => ({ default: module.RegistrationDetailsPage })));
 const Site = React.lazy(() => import("./site").then((module) => ({ default: module.Site })));
@@ -192,6 +193,7 @@ export const Authenticated: React.FC = () => {
           <Route path="/calendars/rooms" element={<RoomsResourcesPage />} />
           <Route path="/calendars/approvals" element={<ApprovalsPage />} />
           <Route path="/calendars/availability" element={<AvailabilityPage />} />
+          <Route path="/calendars/appointments" element={<AppointmentsPage />} />
           <Route path="/calendars/:id" element={<CalendarPage />} />
           <Route path="/calendars" element={<CalendarsPage />} />
           <Route path="/site/*" element={<Site />} />

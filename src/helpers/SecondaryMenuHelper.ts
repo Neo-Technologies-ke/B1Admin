@@ -155,15 +155,19 @@ export class SecondaryMenuHelper {
     const menuItems: MenuItem[] = [];
     let label: string = Locale.label("helpers.secondaryMenuHelper.calendars");
 
-    if (UserHelper.checkAccess(Permissions.contentApi.content.edit)) {
+    const canEditCalendars = UserHelper.checkAccess(Permissions.contentApi.content.edit);
+    const canManageAppointments = canEditCalendars || UserHelper.checkAccess({ api: "ContentApi", contentType: "Appointments", action: "Edit" } as any) || UserHelper.checkAccess({ api: "ContentApi", contentType: "Appointments", action: "Admin" } as any);
+    if (canEditCalendars) {
       menuItems.push({ url: "/calendars", label: Locale.label("helpers.secondaryMenuHelper.calendars"), icon: "calendar_month" });
       menuItems.push({ url: "/calendars/availability", label: Locale.label("helpers.secondaryMenuHelper.availability"), icon: "event_note" });
       menuItems.push({ url: "/calendars/rooms", label: Locale.label("helpers.secondaryMenuHelper.roomsResources"), icon: "meeting_room" });
       menuItems.push({ url: "/calendars/approvals", label: Locale.label("helpers.secondaryMenuHelper.approvals"), icon: "event_available" });
       menuItems.push({ url: "/registrations", label: Locale.label("helpers.secondaryMenuHelper.registrations"), icon: "how_to_reg" });
     }
+    if (canManageAppointments) menuItems.push({ url: "/calendars/appointments", label: "Leader Appointments", icon: "supervisor_account" });
 
     if (path.startsWith("/registrations")) label = Locale.label("helpers.secondaryMenuHelper.registrations");
+    else if (path.startsWith("/calendars/appointments")) label = "Leader Appointments";
     else if (path.startsWith("/calendars/availability")) label = Locale.label("helpers.secondaryMenuHelper.availability");
     else if (path.startsWith("/calendars/rooms")) label = Locale.label("helpers.secondaryMenuHelper.roomsResources");
     else if (path.startsWith("/calendars/approvals")) label = Locale.label("helpers.secondaryMenuHelper.approvals");
