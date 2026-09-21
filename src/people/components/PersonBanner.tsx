@@ -6,13 +6,15 @@ import {
   Email as EmailIcon,
   Home as HomeIcon,
   Sms as SmsIcon,
-  ViewKanban as WorkflowIcon
+  ViewKanban as WorkflowIcon,
+  LockReset as LockResetIcon
 } from "@mui/icons-material";
 import { memo, useMemo, useState, useEffect } from "react";
 import { AppIconButton } from "../../components/ui/AppIconButton";
 import { StatusChip } from "../../components";
 import { SendTextDialog } from "../../groups/components/SendTextDialog";
 import { AddToWorkflowDialog } from "./AddToWorkflowDialog";
+import { ResetPasswordDialog } from "./ResetPasswordDialog";
 
 interface Props {
   person: PersonInterface;
@@ -25,6 +27,7 @@ export const PersonBanner = memo((props: Props) => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [showTextDialog, setShowTextDialog] = useState(false);
   const [showWorkflowDialog, setShowWorkflowDialog] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
   const [hasTextingProvider, setHasTextingProvider] = useState(false);
 
   const canText = useMemo(() => UserHelper.checkAccess(Permissions.messagingApi.texting.send), []);
@@ -48,6 +51,7 @@ export const PersonBanner = memo((props: Props) => {
   }, [canText]);
 
   const canEdit = useMemo(() => UserHelper.checkAccess(Permissions.membershipApi.people.edit), []);
+  const canResetPassword = useMemo(() => UserHelper.checkAccess(Permissions.membershipApi.roles.edit), []);
 
   const membershipStatus = useMemo(() => {
     if (!person?.membershipStatus) return null;
@@ -173,6 +177,9 @@ export const PersonBanner = memo((props: Props) => {
               {canEdit && (
                 <AppIconButton label={Locale.label("people.personBanner.addToWorkflow")} icon={<WorkflowIcon />} tone="header" data-testid="add-to-workflow-button" onClick={() => setShowWorkflowDialog(true)} />
               )}
+              {canResetPassword && userEmail && (
+                <AppIconButton label="Reset password" icon={<LockResetIcon />} tone="header" data-testid="reset-password-button" onClick={() => setShowResetDialog(true)} />
+              )}
             </Stack>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {membershipStatus}
@@ -227,6 +234,9 @@ export const PersonBanner = memo((props: Props) => {
       )}
       {showWorkflowDialog && person?.id && (
         <AddToWorkflowDialog person={person} onClose={() => setShowWorkflowDialog(false)} />
+      )}
+      {showResetDialog && person?.id && userEmail && (
+        <ResetPasswordDialog personId={person.id} personName={person.name?.display || "this member"} userEmail={userEmail} onClose={() => setShowResetDialog(false)} />
       )}
     </Box>
   );
