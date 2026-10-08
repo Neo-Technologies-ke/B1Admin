@@ -7,7 +7,8 @@ import { PendingJoinRequests } from "./components/PendingJoinRequests";
 const PendingRequestsPage = () => {
   const requests = useQuery<GroupJoinRequestInterface[]>({
     queryKey: ["/groupjoinrequests/pending", "MembershipApi"],
-    placeholderData: []
+    placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : []
   });
 
   if (requests.isLoading) return <Loading />;

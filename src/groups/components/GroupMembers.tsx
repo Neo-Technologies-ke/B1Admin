@@ -71,12 +71,14 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
   const groupMembers = useQuery<GroupMemberInterface[]>({
     queryKey: [`/groupmembers?groupId=${props.group?.id}`, "MembershipApi"],
     placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : [],
     enabled: !!props.group?.id && canView
   });
 
   const pendingRequests = useQuery<GroupJoinRequestInterface[]>({
     queryKey: [`/groupjoinrequests/group/${props.group?.id}`, "MembershipApi"],
     placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : [],
     enabled: !!props.group?.id && canView
   });
 

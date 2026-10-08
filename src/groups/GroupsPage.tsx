@@ -69,6 +69,7 @@ const GroupsPage = () => {
   const { data: pendingRequests = [] } = useQuery<GroupJoinRequestInterface[]>({
     queryKey: ["/groupjoinrequests/pending", "MembershipApi"],
     placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : [],
     enabled: canApproveRequests
   });
   const pendingCount = pendingRequests?.length || 0;
