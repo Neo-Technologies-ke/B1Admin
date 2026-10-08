@@ -17,6 +17,7 @@ export const GroupCalendarTab = (props: Props) => {
   const events = useQuery<EventInterface[]>({
     queryKey: [`/events/group/${props.group.id}`, "ContentApi"],
     placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : [],
     enabled: !!props.group?.id
   });
 

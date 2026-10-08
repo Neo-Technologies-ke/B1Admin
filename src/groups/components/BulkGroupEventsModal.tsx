@@ -42,7 +42,7 @@ export function BulkGroupEventsModal(props: Props) {
 
   useEffect(() => {
     if (!firstDate || !lastDate) return;
-    ApiHelper.get(`/events/holidays?start=${firstDate}&end=${lastDate}`, "ContentApi").then(setHolidays).catch(() => setHolidays([]));
+    ApiHelper.get(`/events/holidays?start=${firstDate}&end=${lastDate}`, "ContentApi").then((d) => setHolidays(Array.isArray(d) ? d : [])).catch(() => setHolidays([]));
   }, [firstDate, lastDate]);
 
   const holidayNames = useMemo(() => {
