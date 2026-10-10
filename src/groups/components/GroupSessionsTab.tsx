@@ -9,6 +9,7 @@ import { SessionAttendance } from "./SessionAttendance";
 import { MembersAdd } from "./MembersAdd";
 import { SessionAdd } from "./SessionAdd";
 import { SessionEdit } from "./SessionEdit";
+import { canEditGroup } from "../../helpers/GroupAccessHelper";
 
 interface Props {
   group: GroupInterface;
@@ -75,7 +76,7 @@ export const GroupSessionsTab = (props: Props) => {
       <Grid size={{ xs: 12, md: 4 }}>
         {addSessionVisible && <SessionAdd key="sessionAdd" group={props.group} updatedFunction={handleSessionAdd} />}
         {editSessionVisible && editingSession && <SessionEdit key="sessionEdit" group={props.group} session={editingSession} updatedFunction={handleSessionUpdated} />}
-        {!addSessionVisible && !editSessionVisible && UserHelper.checkAccess(Permissions.attendanceApi.attendance.edit) && (
+        {!addSessionVisible && !editSessionVisible && (UserHelper.checkAccess(Permissions.attendanceApi.attendance.edit) || canEditGroup(props.group?.id)) && (
           <>
             <PersonAddAdvanced getPhotoUrl={PersonHelper.getPhotoUrl} addFunction={addPerson} showCreatePersonOnNotFound />
             <MembersAdd key="membersAdd" group={props.group} addFunction={addPerson} hiddenPeople={hiddenPeople} />

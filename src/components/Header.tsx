@@ -34,8 +34,10 @@ export const Header: React.FC = () => {
     const donationIcon = donationError ? "error" : "volunteer_activism";
     const menuItems: { url: string; icon: string; label: string }[] = [];
     menuItems.push({ url: "/", icon: "home", label: Locale.label("components.wrapper.dash") });
+    const scopedGroupAdmin = !UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view) && UserHelper.checkAccess({ api: "MembershipApi", contentType: "Own Groups", action: "View" });
     if (UserHelper.checkAccess(Permissions.membershipApi.people.view)) menuItems.push({ url: "/people", icon: "person", label: Locale.label("components.wrapper.ppl") });
     else if (formPermission || isFormMember) menuItems.push({ url: "/forms", icon: "person", label: Locale.label("components.wrapper.ppl") });
+    if (scopedGroupAdmin) menuItems.push({ url: "/groups", icon: "groups", label: "My Groups" });
     if (UserHelper.checkAccess(Permissions.givingApi.donations.viewSummary)) menuItems.push({ url: "/donations", label: Locale.label("components.wrapper.don"), icon: donationIcon });
 
     const canViewPlans = UserHelper.checkAccess(Permissions.membershipApi.plans.edit) || isMinistryMember;

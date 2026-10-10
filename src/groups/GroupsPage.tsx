@@ -8,6 +8,7 @@ import { type GroupInterface, type GroupJoinRequestInterface } from "@churchapps
 import { useMountedState, Permissions } from "@churchapps/apphelper";
 import { useQuery } from "@tanstack/react-query";
 import { CountChip, ExportButton, SortableTableHead } from "../components/ui";
+import { ownGroups } from "../helpers/GroupAccessHelper";
 
 const formatHeader = (key: string): string => {
   const customMap: Record<string, string> = {
@@ -65,7 +66,7 @@ const GroupsPage = () => {
 
   React.useEffect(loadData, [isMounted]);
 
-  const canApproveRequests = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit);
+  const canApproveRequests = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit) || UserHelper.checkAccess(ownGroups.edit);
   const { data: pendingRequests = [] } = useQuery<GroupJoinRequestInterface[]>({
     queryKey: ["/groupjoinrequests/pending", "MembershipApi"],
     placeholderData: [],

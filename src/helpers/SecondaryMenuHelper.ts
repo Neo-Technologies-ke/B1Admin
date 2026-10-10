@@ -26,9 +26,9 @@ export class SecondaryMenuHelper {
   static getPeopleMenu = (path: string, data: any) => {
     const menuItems: MenuItem[] = [];
     let label: string = "";
-    menuItems.push({ url: "/people", label: Locale.label("components.wrapper.ppl"), icon: "person" });
+    if (UserHelper.checkAccess(Permissions.membershipApi.people.view)) menuItems.push({ url: "/people", label: Locale.label("components.wrapper.ppl"), icon: "person" });
     menuItems.push({ url: "/groups", label: Locale.label("components.wrapper.groups"), icon: "groups" });
-    if (UserHelper.checkAccess(Permissions.membershipApi.groups.edit) || UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit)) menuItems.push({ url: "/groups/reports", label: "Group Reports", icon: "article" });
+    if (UserHelper.checkAccess(Permissions.membershipApi.groups.edit) || UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit) || UserHelper.checkAccess({ api: "MembershipApi", contentType: "Own Groups", action: "Edit" })) menuItems.push({ url: "/groups/reports", label: "Group Reports", icon: "article" });
     if (UserHelper.checkAccess(Permissions.attendanceApi.attendance.viewSummary)) menuItems.push({ url: "/attendance", label: Locale.label("components.wrapper.att"), icon: "calendar_month" });
     if (data?.formPermission) menuItems.push({ url: "/forms", label: Locale.label("components.wrapper.forms"), icon: "description" });
 
