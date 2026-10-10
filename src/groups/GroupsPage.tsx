@@ -49,9 +49,14 @@ const GroupsPage = () => {
     loadData();
   };
 
+  // Scoped leaders (village coordinators, PG admins) manage every group they
+  // lead — including team-tagged ones like Pastoral Team — while full admins
+  // keep the standard-tag directory view.
+  const isScoped = UserHelper.checkAccess(ownGroups.view) && !UserHelper.checkAccess(Permissions.membershipApi.groups.edit);
+
   const loadData = () => {
     setIsLoading(true);
-    ApiHelper.get("/groups/tag/standard", "MembershipApi")
+    ApiHelper.get(isScoped ? "/groups" : "/groups/tag/standard", "MembershipApi")
       .then((data: any) => {
         if (isMounted()) {
           setGroups(data);
