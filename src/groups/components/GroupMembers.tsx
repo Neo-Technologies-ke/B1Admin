@@ -6,7 +6,7 @@ import {
   type PersonInterface
 } from "@churchapps/helpers";
 import { PendingJoinRequests } from "./PendingJoinRequests";
-import { canEditGroup, canViewGroup } from "../../helpers/GroupAccessHelper";
+import { useGroupAccess } from "../../helpers/GroupAccessHelper";
 import {
   ApiHelper,
   DisplayBox,
@@ -80,7 +80,8 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
     return [];
   }, [props.group?.categoryName]);
 
-  const canView = useMemo(() => canViewGroup(props.group?.id), [props.group?.id]);
+  const groupAccess = useGroupAccess(props.group?.id);
+  const canView = groupAccess.canView;
 
   const groupMembers = useQuery<GroupMemberInterface[]>({
     queryKey: [`/groupmembers?groupId=${props.group?.id}`, "MembershipApi"],
@@ -155,7 +156,7 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
     }
   }, [props, getMemberByPersonId, groupMembers]);
 
-  const canEdit = useMemo(() => canEditGroup(props.group?.id), [props.group?.id]);
+  const canEdit = groupAccess.canEdit;
 
   const bodyCellSx = {
     borderBottom: "1px solid",
@@ -350,7 +351,7 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
 
   const getEditContent = () => (
     <>
-      {canEditGroup(props.group?.id) && (
+      {canEdit && (
         <AppIconButton label={Locale.label("groups.groupMembers.sendMemMsg")} icon={<EditNoteIcon />} tone="card" onClick={() => { setCount(0); setShow(!show); }} data-testid="send-message-button" />
       )}
       <ExportButton data={exportData} filename="groupmembers.csv" text={Locale.label("groups.groupsPage.export")} />

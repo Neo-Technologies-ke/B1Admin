@@ -9,13 +9,14 @@ import { SessionAttendance } from "./SessionAttendance";
 import { MembersAdd } from "./MembersAdd";
 import { SessionAdd } from "./SessionAdd";
 import { SessionEdit } from "./SessionEdit";
-import { canEditGroup } from "../../helpers/GroupAccessHelper";
+import { useGroupAccess } from "../../helpers/GroupAccessHelper";
 
 interface Props {
   group: GroupInterface;
 }
 
 export const GroupSessionsTab = (props: Props) => {
+  const { canEdit } = useGroupAccess(props.group?.id);
   const [addedPerson, setAddedPerson] = React.useState({} as PersonInterface);
   const [addedSession, setAddedSession] = React.useState({} as SessionInterface);
   const [addSessionVisible, setAddSessionVisible] = React.useState(false);
@@ -76,7 +77,7 @@ export const GroupSessionsTab = (props: Props) => {
       <Grid size={{ xs: 12, md: 4 }}>
         {addSessionVisible && <SessionAdd key="sessionAdd" group={props.group} updatedFunction={handleSessionAdd} />}
         {editSessionVisible && editingSession && <SessionEdit key="sessionEdit" group={props.group} session={editingSession} updatedFunction={handleSessionUpdated} />}
-        {!addSessionVisible && !editSessionVisible && (UserHelper.checkAccess(Permissions.attendanceApi.attendance.edit) || canEditGroup(props.group?.id)) && (
+        {!addSessionVisible && !editSessionVisible && (UserHelper.checkAccess(Permissions.attendanceApi.attendance.edit) || canEdit) && (
           <>
             <PersonAddAdvanced getPhotoUrl={PersonHelper.getPhotoUrl} addFunction={addPerson} showCreatePersonOnNotFound />
             <MembersAdd key="membersAdd" group={props.group} addFunction={addPerson} hiddenPeople={hiddenPeople} />

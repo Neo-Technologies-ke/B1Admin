@@ -18,7 +18,7 @@ import { SendTextDialog } from "./SendTextDialog";
 import { SendEmailDialog } from "./SendEmailDialog";
 import { SendNotificationDialog } from "./SendNotificationDialog";
 import { AppIconButton } from "../../components/ui/AppIconButton";
-import { canEditGroup } from "../../helpers/GroupAccessHelper";
+import { useGroupAccess } from "../../helpers/GroupAccessHelper";
 
 interface Props {
   group: GroupInterface;
@@ -34,7 +34,8 @@ export const GroupBanner = memo((props: Props) => {
   const [showNotificationDialog, setShowNotificationDialog] = React.useState(false);
   const [hasTextingProvider, setHasTextingProvider] = React.useState(false);
 
-  const canEdit = useMemo(() => UserHelper.checkAccess(Permissions.membershipApi.groups.edit) || canEditGroup(group?.id), [group?.id]);
+  const groupAccess = useGroupAccess(group?.id);
+  const canEdit = useMemo(() => UserHelper.checkAccess(Permissions.membershipApi.groups.edit) || groupAccess.canEdit, [groupAccess.canEdit]);
   const canSendNotifications = useMemo(() => UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit), []);
   const canText = useMemo(() => UserHelper.checkAccess(Permissions.messagingApi.texting.send), []);
 

@@ -5,13 +5,14 @@ import { PersonHelper } from "@churchapps/apphelper";
 import { Grid } from "@mui/material";
 import { GroupMembers } from "./GroupMembers";
 import { PersonAddAdvanced } from "../../people/components/PersonAddAdvanced";
-import { canEditGroup } from "../../helpers/GroupAccessHelper";
+import { useGroupAccess } from "../../helpers/GroupAccessHelper";
 
 interface Props {
   group: GroupInterface;
 }
 
 export const GroupMembersTab = (props: Props) => {
+  const { canEdit } = useGroupAccess(props.group?.id);
   const [addedPerson, setAddedPerson] = React.useState({} as PersonInterface);
   const addPerson = (p: PersonInterface) => setAddedPerson(p);
 
@@ -25,7 +26,7 @@ export const GroupMembersTab = (props: Props) => {
         <Grid size={{ xs: 12, md: 8 }}>
           <GroupMembers group={props.group} addedPerson={addedPerson} addedCallback={handleAddedCallback} />
         </Grid>
-        {canEditGroup(props.group?.id) && (
+        {canEdit && (
           <Grid size={{ xs: 12, md: 4 }}>
             <PersonAddAdvanced getPhotoUrl={PersonHelper.getPhotoUrl} addFunction={addPerson} showCreatePersonOnNotFound />
           </Grid>

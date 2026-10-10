@@ -9,6 +9,7 @@ import {
 import { Add, Article, Delete, Edit } from "@mui/icons-material";
 import { type GroupInterface } from "@churchapps/helpers";
 import { ApiHelper, UserHelper, Permissions } from "@churchapps/apphelper";
+import { useLedGroupIds } from "../../helpers/GroupAccessHelper";
 
 interface ReportQuestion {
   id: string; label: string; type: "text" | "textarea" | "radio" | "select" | "ratings" | "group";
@@ -44,7 +45,7 @@ const missingRequired = (questions: ReportQuestion[], answers: Record<string, an
 export const GroupReportsTab = ({ group }: Props) => {
   const queryClient = useQueryClient();
   const canEditAll = UserHelper.checkAccess(Permissions.membershipApi.groupMembers.edit);
-  const isGroupLeader = UserHelper.userChurch?.groups?.some((item: any) => item.id === group?.id && item.leader);
+  const isGroupLeader = useLedGroupIds().has(group?.id);
   const canWrite = canEditAll || isGroupLeader;
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<GroupReport | null>(null);
