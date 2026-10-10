@@ -1,14 +1,28 @@
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Box, Button, Card, CardContent, CardHeader, Chip, Dialog, DialogActions, DialogContent,
-  DialogTitle, Divider, FormControl, IconButton, InputLabel, MenuItem, Select, Stack,
-  Tab, Tabs, TextField, Tooltip, Typography
+  Box, Button, Card, CardContent, CardHeader, Checkbox, Chip, Dialog, DialogActions,
+  DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, IconButton,
+  InputLabel, MenuItem, Select, Stack, Tab, Tabs, TextField, Tooltip, Typography
 } from "@mui/material";
 import { Add, Article, Delete, Edit, Reply } from "@mui/icons-material";
 import { ApiHelper, PageHeader } from "@churchapps/apphelper";
 
-interface ReportTemplate { id?: string; name: string; description?: string; content: string; active?: boolean; }
+interface ReportQuestion {
+  id: string; label: string; type: "text" | "textarea" | "radio" | "select" | "ratings" | "group";
+  required?: boolean; options?: string[]; scale?: string[]; helpText?: string;
+}
+const QUESTION_TYPES: { value: ReportQuestion["type"]; label: string }[] = [
+  { value: "text", label: "Short answer" },
+  { value: "textarea", label: "Long answer" },
+  { value: "radio", label: "Single choice (radio)" },
+  { value: "select", label: "Dropdown" },
+  { value: "ratings", label: "Ratings (per area)" },
+  { value: "group", label: "Village (auto-filled)" }
+];
+const newQuestion = (index: number): ReportQuestion => ({ id: `q${Date.now().toString(36)}${index}`, label: "", type: "textarea", required: true, options: [] });
+
+interface ReportTemplate { id?: string; name: string; description?: string; content: string; questions?: ReportQuestion[]; active?: boolean; }
 interface GroupReport {
   id?: string; groupId?: string; title?: string; content?: string; reportDate?: string; status?: string;
   createdAt?: string; submittedAt?: string; readAt?: string; response?: string; respondedAt?: string;
@@ -56,9 +70,11 @@ export const GroupReportsPage = () => {
     if (report.id && report.status === "submitted") readMutation.mutate(report.id);
   };
   const openTemplate = (value?: ReportTemplate) => {
-    setTemplate(value ? { ...value } : { name: "", description: "", content: "", active: true });
+    setTemplate(value ? { ...value, questions: value.questions || [] } : { name: "", description: "", content: "", questions: [], active: true });
     setTemplateOpen(true);
   };
+  const updateQuestion = (id: string, patch: Partial<ReportQuestion>) =>
+    setTemplate((t) => ({ ...t, questions: (t.questions || []).map((q) => q.id === id ? { ...q, ...patch } : q) }));
 
   return <>
     <PageHeader title="Group Reports" subtitle="Review group leader submissions, respond, and manage report-writing templates." />
@@ -90,7 +106,10 @@ export const GroupReportsPage = () => {
       {tab === 1 && <>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}><Typography color="text.secondary">Templates persist for future reports and guide every group leader.</Typography><Button variant="contained" startIcon={<Add />} onClick={() => openTemplate()}>New template</Button></Stack>
         <Stack spacing={2}>{templateList.map((item) => <Card key={item.id} variant="outlined"><CardHeader title={<Stack direction="row" spacing={1} alignItems="center"><Typography fontWeight={600}>{item.name}</Typography>{item.active === false && <Chip label="Inactive" size="small" />}</Stack>} subheader={item.description}
-          action={<Stack direction="row"><Tooltip title="Edit"><IconButton onClick={() => openTemplate(item)}><Edit /></IconButton></Tooltip><Tooltip title="Delete"><IconButton color="error" onClick={() => item.id && window.confirm("Delete this reporting template?") && deleteTemplateMutation.mutate(item.id)}><Delete /></IconButton></Tooltip></Stack>} /><Divider /><CardContent><Typography sx={{ whiteSpace: "pre-wrap" }}>{item.content}</Typography></CardContent></Card>)}</Stack>
+          action={<Stack direction="row"><Tooltip title="Edit"><IconButton onClick={() => openTemplate(item)}><Edit /></IconButton></Tooltip><Tooltip title="Delete"><IconButton color="error" onClick={() => item.id && window.confirm("Delete this reporting template?") && deleteTemplateMutation.mutate(item.id)}><Delete /></IconButton></Tooltip></Stack>} /><Divider /><CardContent>
+            {item.questions?.length ? <Stack spacing={0.5}>{item.questions.map((q, i) => <Typography key={q.id} variant="body2">{i + 1}. {q.label} <Typography component="span" variant="caption" color="text.secondary">({QUESTION_TYPES.find((t) => t.value === q.type)?.label}{q.required === false ? ", optional" : ""})</Typography></Typography>)}{item.content && <Typography variant="body2" color="text.secondary" sx={{ mt: 1, whiteSpace: "pre-wrap" }}>{item.content}</Typography>}</Stack>
+              : <Typography sx={{ whiteSpace: "pre-wrap" }}>{item.content}</Typography>}
+          </CardContent></Card>)}</Stack>
       </>}
     </Box>
 
@@ -103,13 +122,32 @@ export const GroupReportsPage = () => {
       </Stack></DialogContent><DialogActions><Button onClick={() => setSelected(null)}>Close</Button><Button variant="contained" startIcon={<Reply />} disabled={!response.trim() || respondMutation.isPending} onClick={() => selected?.id && respondMutation.mutate({ id: selected.id, responseText: response })}>Send response</Button></DialogActions>
     </Dialog>
 
-    <Dialog open={templateOpen} onClose={() => setTemplateOpen(false)} maxWidth="sm" fullWidth>
+    <Dialog open={templateOpen} onClose={() => setTemplateOpen(false)} maxWidth="md" fullWidth>
       <DialogTitle>{template.id ? "Edit reporting template" : "Create reporting template"}</DialogTitle><DialogContent><Stack spacing={2} sx={{ mt: 1 }}>
         <TextField label="Template name" value={template.name} onChange={(e) => setTemplate({ ...template, name: e.target.value })} />
         <TextField label="Description" value={template.description || ""} onChange={(e) => setTemplate({ ...template, description: e.target.value })} />
-        <TextField label="Report guidance / structure" multiline minRows={10} value={template.content} onChange={(e) => setTemplate({ ...template, content: e.target.value })} placeholder={"Attendance:\nHighlights:\nChallenges:\nPrayer requests:\nNext steps:"} />
+        <Divider textAlign="left"><Typography variant="subtitle2" color="text.secondary">Questions</Typography></Divider>
+        {(template.questions || []).map((q, i) => <Card key={q.id} variant="outlined"><CardContent sx={{ py: 1.5, "&:last-child": { pb: 1.5 } }}><Stack spacing={1.5}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography color="text.secondary" sx={{ minWidth: 20 }}>{i + 1}.</Typography>
+            <TextField size="small" fullWidth label="Question" value={q.label} onChange={(e) => updateQuestion(q.id, { label: e.target.value })} />
+            <FormControl size="small" sx={{ minWidth: 190 }}><InputLabel>Type</InputLabel><Select value={q.type} label="Type" onChange={(e) => updateQuestion(q.id, { type: e.target.value as ReportQuestion["type"] })}>{QUESTION_TYPES.map((t) => <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>)}</Select></FormControl>
+            <Tooltip title="Remove question"><IconButton color="error" onClick={() => setTemplate({ ...template, questions: (template.questions || []).filter((item) => item.id !== q.id) })}><Delete /></IconButton></Tooltip>
+          </Stack>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <FormControlLabel control={<Checkbox size="small" checked={q.required !== false && q.type !== "group"} disabled={q.type === "group"} onChange={(e) => updateQuestion(q.id, { required: e.target.checked })} />} label="Required" />
+            {(q.type === "radio" || q.type === "select") && <TextField size="small" fullWidth label="Options (comma separated)" value={(q.options || []).join(", ")} onChange={(e) => updateQuestion(q.id, { options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />}
+            {q.type === "ratings" && <>
+              <TextField size="small" fullWidth label="Areas to rate (comma separated)" value={(q.options || []).join(", ")} onChange={(e) => updateQuestion(q.id, { options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />
+              <TextField size="small" fullWidth label="Rating scale (comma separated)" value={(q.scale || []).join(", ")} placeholder="Poor, Average, Good, Excellent" onChange={(e) => updateQuestion(q.id, { scale: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />
+            </>}
+            {q.type === "group" && <Typography variant="caption" color="text.secondary">The reporter's village is filled in automatically — this question is never required.</Typography>}
+          </Stack>
+        </Stack></CardContent></Card>)}
+        <Button variant="outlined" startIcon={<Add />} onClick={() => setTemplate({ ...template, questions: [...(template.questions || []), newQuestion((template.questions || []).length)] })}>Add question</Button>
+        <TextField label="Additional guidance shown above the form (optional)" multiline minRows={3} value={template.content} onChange={(e) => setTemplate({ ...template, content: e.target.value })} placeholder="Instructions or context for the leader writing this report" />
         <FormControl><InputLabel>Status</InputLabel><Select value={template.active === false ? "inactive" : "active"} label="Status" onChange={(e) => setTemplate({ ...template, active: e.target.value === "active" })}><MenuItem value="active">Active</MenuItem><MenuItem value="inactive">Inactive</MenuItem></Select></FormControl>
-      </Stack></DialogContent><DialogActions><Button onClick={() => setTemplateOpen(false)}>Cancel</Button><Button variant="contained" disabled={!template.name.trim() || !template.content.trim() || templateMutation.isPending} onClick={() => templateMutation.mutate(template)}>Save template</Button></DialogActions>
+      </Stack></DialogContent><DialogActions><Button onClick={() => setTemplateOpen(false)}>Cancel</Button><Button variant="contained" disabled={!template.name.trim() || (!template.content.trim() && !template.questions?.length) || templateMutation.isPending} onClick={() => templateMutation.mutate(template)}>Save template</Button></DialogActions>
     </Dialog>
   </>;
 };
