@@ -10,7 +10,8 @@ import { GRID_SIZES } from "../../components/ui/layoutPresets";
 interface StatDef {
   label: string;
   icon: React.ReactNode;
-  queryKey: [string, string];
+  queryKey?: [string, string];
+  staticCount?: number;
   link: string;
   color: string;
   show: boolean;
@@ -18,8 +19,8 @@ interface StatDef {
 
 const useCount = (stat: StatDef) =>
   useQuery({
-    queryKey: stat.queryKey,
-    enabled: stat.show,
+    queryKey: stat.queryKey || ["_none"],
+    enabled: stat.show && !!stat.queryKey,
     select: (data) => (Array.isArray(data) ? data.length : 0),
     placeholderData: []
   });
@@ -32,6 +33,10 @@ export const DashboardStats: React.FC = () => {
     UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view) ||
     UserHelper.checkAccess(ownGroups.view);
 
+  // Groups where the signed-in user is flagged as leader — drives the
+  // "Groups You Lead" card without an extra API call.
+  const ledGroupCount = (UserHelper.userChurch?.groups as any[] | undefined)?.filter((g) => g.leader).length || 0;
+
   const stats: StatDef[] = [
     {
       label: "Members",
@@ -42,12 +47,12 @@ export const DashboardStats: React.FC = () => {
       show: UserHelper.checkAccess(Permissions.membershipApi.people.view)
     },
     {
-      label: "Groups",
+      label: "Groups You Lead",
       icon: <Groups />,
-      queryKey: ["/groups/tag/standard", "MembershipApi"],
+      staticCount: ledGroupCount,
       link: "/groups",
       color: "#7c3aed",
-      show: canViewGroups
+      show: canViewGroups || ledGroupCount > 0
     },
     {
       label: "Pending Requests",
@@ -81,7 +86,7 @@ export const DashboardStats: React.FC = () => {
     <Grid container spacing={2} sx={{ mb: 3 }}>
       {stats.map((stat, i) => {
         if (!stat.show) return null;
-        const count = counts[i].data as number;
+        const count = stat.staticCount !== undefined ? stat.staticCount : (counts[i].data as number);
         return (
           <Grid key={stat.label} size={GRID_SIZES.fourColumn}>
             <Paper
