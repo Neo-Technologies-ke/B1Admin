@@ -143,10 +143,17 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
   const tableRows = useMemo(() => {
     const rows: JSX.Element[] = [];
 
-    for (let i = 0; i < groupMembers.data.length; i++) {
-      const gm = groupMembers.data[i];
+    // Leaders always first, then alphabetical by display name
+    const sorted = [...groupMembers.data].sort((a, b) => {
+      const leaderDiff = (b.leader ? 1 : 0) - (a.leader ? 1 : 0);
+      if (leaderDiff !== 0) return leaderDiff;
+      return (a.person?.name?.display || "").localeCompare(b.person?.name?.display || "");
+    });
+
+    for (let i = 0; i < sorted.length; i++) {
+      const gm = sorted[i];
       const personName = gm.person?.name?.display || Locale.label("groups.groupMembers.unknown");
-      const isLast = i === groupMembers.data.length - 1;
+      const isLast = i === sorted.length - 1;
       const cellSx = isLast ? { ...bodyCellSx, borderBottom: 0 } : bodyCellSx;
 
       const roleCell = gm.leader ? (
@@ -155,7 +162,7 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
           variant="filled"
           color="warning"
           icon={<StarIcon sx={{ fontSize: 14 }} />}
-          label={Locale.label("groups.groupMembers.leader")}
+          label={(gm as any).leaderTitle || Locale.label("groups.groupMembers.leader")}
           sx={{
             fontWeight: 600,
             letterSpacing: "0.02em",
