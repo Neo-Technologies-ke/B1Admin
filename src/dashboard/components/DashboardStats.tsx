@@ -11,7 +11,7 @@ interface StatDef {
   label: string;
   icon: React.ReactNode;
   queryKey?: [string, string];
-  staticCount?: number;
+  countWhere?: (m: any) => boolean;
   link: string;
   color: string;
   show: boolean;
@@ -21,7 +21,7 @@ const useCount = (stat: StatDef) =>
   useQuery({
     queryKey: stat.queryKey || ["_none"],
     enabled: stat.show && !!stat.queryKey,
-    select: (data) => (Array.isArray(data) ? data.length : 0),
+    select: (data) => (Array.isArray(data) ? data.filter(stat.countWhere || (() => true)).length : 0),
     placeholderData: []
   });
 
@@ -33,9 +33,7 @@ export const DashboardStats: React.FC = () => {
     UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view) ||
     UserHelper.checkAccess(ownGroups.view);
 
-  // Groups where the signed-in user is flagged as leader — drives the
-  // "Groups You Lead" card without an extra API call.
-  const ledGroupCount = (UserHelper.userChurch?.groups as any[] | undefined)?.filter((g) => g.leader).length || 0;
+  const myPersonId = UserHelper.person?.id || "";
 
   const stats: StatDef[] = [
     {
@@ -49,10 +47,11 @@ export const DashboardStats: React.FC = () => {
     {
       label: "Groups You Lead",
       icon: <Groups />,
-      staticCount: ledGroupCount,
+      queryKey: [`/groupmembers?personId=${myPersonId}`, "MembershipApi"],
+      countWhere: (m) => !!m.leader,
       link: "/groups",
       color: "#7c3aed",
-      show: canViewGroups || ledGroupCount > 0
+      show: canViewGroups && !!myPersonId
     },
     {
       label: "Pending Requests",
@@ -86,7 +85,7 @@ export const DashboardStats: React.FC = () => {
     <Grid container spacing={2} sx={{ mb: 3 }}>
       {stats.map((stat, i) => {
         if (!stat.show) return null;
-        const count = stat.staticCount !== undefined ? stat.staticCount : (counts[i].data as number);
+        const count = counts[i].data as number;
         return (
           <Grid key={stat.label} size={GRID_SIZES.fourColumn}>
             <Paper
