@@ -28,7 +28,8 @@ export const DashboardStats: React.FC = () => {
   const navigate = useNavigate();
 
   const canViewGroups =
-    UserHelper.checkAccess(Permissions.membershipApi.groups.view) ||
+    UserHelper.checkAccess(Permissions.membershipApi.groups.edit) ||
+    UserHelper.checkAccess(Permissions.membershipApi.groupMembers.view) ||
     UserHelper.checkAccess(ownGroups.view);
 
   const stats: StatDef[] = [
