@@ -53,7 +53,7 @@ export const PlanPage = () => {
     );
   }
 
-  const breadcrumbItems: { label: string; path?: string }[] = [{ label: Locale.label("components.wrapper.plans") || "Plans", path: "/serving" }];
+  const breadcrumbItems: { label: string; path?: string }[] = [{ label: "Ministries", path: "/serving/plans" }];
 
   if (planType) {
     breadcrumbItems.push({ label: planType.name, path: `/serving/planTypes/${planType.id}` });

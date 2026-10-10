@@ -12,6 +12,8 @@ interface StatDef {
   icon: React.ReactNode;
   queryKey?: [string, string];
   countWhere?: (m: any) => boolean;
+  dedupeKey?: (m: any) => string;
+  extraIds?: string[];
   link: string;
   color: string;
   show: boolean;
@@ -21,7 +23,16 @@ const useCount = (stat: StatDef) =>
   useQuery({
     queryKey: stat.queryKey || ["_none"],
     enabled: stat.show && !!stat.queryKey,
-    select: (data) => (Array.isArray(data) ? data.filter(stat.countWhere || (() => true)).length : 0),
+    select: (data) => {
+      const arr = Array.isArray(data) ? data : [];
+      const filtered = stat.countWhere ? arr.filter(stat.countWhere) : arr;
+      if (stat.dedupeKey) {
+        const ids = new Set(filtered.map(stat.dedupeKey));
+        stat.extraIds?.forEach((id) => ids.add(id));
+        return ids.size;
+      }
+      return filtered.length;
+    },
     placeholderData: []
   });
 
@@ -34,6 +45,9 @@ export const DashboardStats: React.FC = () => {
     UserHelper.checkAccess(ownGroups.view);
 
   const myPersonId = UserHelper.person?.id || "";
+  const sessionLedIds = ((UserHelper.currentUserChurch as any)?.groups || [])
+    .filter((g: any) => g.leader)
+    .map((g: any) => g.id);
 
   const stats: StatDef[] = [
     {
@@ -49,6 +63,8 @@ export const DashboardStats: React.FC = () => {
       icon: <Groups />,
       queryKey: [`/groupmembers?personId=${myPersonId}`, "MembershipApi"],
       countWhere: (m) => !!m.leader,
+      dedupeKey: (m) => m.groupId,
+      extraIds: sessionLedIds,
       link: "/groups",
       color: "#7c3aed",
       show: canViewGroups && !!myPersonId

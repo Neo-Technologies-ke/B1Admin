@@ -92,14 +92,14 @@ export class SecondaryMenuHelper {
     menuItems.push({ url: "/serving/tasks", label: Locale.label("components.wrapper.myWork"), icon: "list_alt" });
     menuItems.push({ url: "/serving/tasks/workflows", label: Locale.label("components.wrapper.workflows"), icon: "view_kanban" });
     if (canViewPlans) {
-      menuItems.push({ url: "/serving/plans", label: Locale.label("components.wrapper.plans"), icon: "assignment" });
+      menuItems.push({ url: "/serving/plans", label: "Ministries", icon: "assignment" });
       menuItems.push({ url: "/serving/songs", label: Locale.label("components.wrapper.songs"), icon: "music_note" });
     }
 
     if (path.startsWith("/serving/songs")) label = Locale.label("components.wrapper.songs");
     else if (path.startsWith("/serving/tasks/workflows")) label = Locale.label("components.wrapper.workflows");
     else if (path.startsWith("/serving/tasks")) label = Locale.label("components.wrapper.myWork");
-    else if (path.startsWith("/serving")) label = Locale.label("components.wrapper.plans");
+    else if (path.startsWith("/serving")) label = "Ministries";
 
     return { menuItems, label };
   };
