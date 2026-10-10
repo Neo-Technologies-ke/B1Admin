@@ -44,7 +44,7 @@ export const DashboardStats: React.FC = () => {
     {
       label: "Groups",
       icon: <Groups />,
-      queryKey: ["/groups", "MembershipApi"],
+      queryKey: ["/groups/tag/standard", "MembershipApi"],
       link: "/groups",
       color: "#7c3aed",
       show: canViewGroups
