@@ -22,6 +22,10 @@ import {
   Box,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
   InputLabel,
@@ -66,6 +70,15 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
   const [message, setMessage] = useState<string>("");
   const [count, setCount] = useState<number>(0);
   const [showInviteDialog, setShowInviteDialog] = useState<boolean>(false);
+  const [leaderDialogMember, setLeaderDialogMember] = useState<GroupMemberInterface | null>(null);
+  const [leaderTitleChoice, setLeaderTitleChoice] = useState<string>("");
+
+  const leaderTitleOptions = useMemo(() => {
+    const cat = (props.group?.categoryName || "").toLowerCase();
+    if (cat === "village") return ["Village Leader", "Village Coordinator"];
+    if (cat === "people group") return ["PG Leader", "PG ICT Coordinator", "PG Admin"];
+    return [];
+  }, [props.group?.categoryName]);
 
   const canView = useMemo(() => canViewGroup(props.group?.id), [props.group?.id]);
 
@@ -92,16 +105,28 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
     [groupMembers]
   );
 
-  const handleToggleLeader = useCallback(
-    (member: GroupMemberInterface) => {
+  const saveLeader = useCallback(
+    (member: GroupMemberInterface, leader: boolean, leaderTitle?: string) => {
       // Don't mutate the cached object — React Query's structural sharing
       // would then see the refetched data as unchanged and skip the re-render.
-      const updated = { ...member, leader: !member.leader };
+      const updated = { ...member, leader, leaderTitle: leader ? leaderTitle || null : null };
       ApiHelper.post("/groupmembers", [updated], "MembershipApi").then(() => {
         groupMembers.refetch();
       });
     },
     [groupMembers]
+  );
+
+  const handleToggleLeader = useCallback(
+    (member: GroupMemberInterface) => {
+      if (member.leader || leaderTitleOptions.length === 0) {
+        saveLeader(member, !member.leader);
+      } else {
+        setLeaderTitleChoice(leaderTitleOptions[0]);
+        setLeaderDialogMember(member);
+      }
+    },
+    [leaderTitleOptions, saveLeader]
   );
 
   const getMemberByPersonId = useCallback(
@@ -565,6 +590,35 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
         onChanged={() => { pendingRequests.refetch(); groupMembers.refetch(); }}
       />
       {getTable()}
+      <Dialog open={!!leaderDialogMember} onClose={() => setLeaderDialogMember(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Make Leader</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Choose the leader role for {leaderDialogMember?.person?.name?.display} in {props.group?.name}.
+          </Typography>
+          <FormControl fullWidth size="small">
+            <InputLabel id="leader-title-label">Leader type</InputLabel>
+            <Select
+              labelId="leader-title-label"
+              label="Leader type"
+              value={leaderTitleChoice}
+              onChange={(e) => setLeaderTitleChoice(e.target.value)}>
+              {leaderTitleOptions.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLeaderDialogMember(null)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (leaderDialogMember) saveLeader(leaderDialogMember, true, leaderTitleChoice);
+              setLeaderDialogMember(null);
+            }}>
+            Make Leader
+          </Button>
+        </DialogActions>
+      </Dialog>
       {showInviteDialog && props.addedPerson && (
         <SendInviteDialog
           open={showInviteDialog}

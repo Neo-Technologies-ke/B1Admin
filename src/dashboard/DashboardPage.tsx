@@ -1,12 +1,18 @@
-import { Stack, Grid, Box } from "@mui/material";
+import { Stack, Grid, Box, Typography } from "@mui/material";
 import { FlashOn } from "@mui/icons-material";
 import { TaskList } from "../serving/tasks/components/TaskList";
-import { PeopleSearch, AdminWelcome, MemberWelcome } from "./components";
+import { PeopleSearch, AdminWelcome, MemberWelcome, DashboardStats } from "./components";
 import { Groups } from "../people/components";
 import { UserHelper, Permissions, Locale, PageHeader } from "@churchapps/apphelper";
 import { PageContainer } from "../components/ui/PageContainer";
 import { CardWithHeader } from "../components/ui/CardWithHeader";
 import { GRID_SIZES } from "../components/ui/layoutPresets";
+
+const greetingForHour = (hour: number) => {
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+};
 
 export const DashboardPage = () => {
   const isDomainAdmin = UserHelper.checkAccess(Permissions.membershipApi.settings.edit)
@@ -24,10 +30,25 @@ export const DashboardPage = () => {
     ? Locale.label("dashboard.adminWelcome.subtitle")
     : Locale.label("dashboard.memberWelcome.subtitle");
 
+  const firstName = (UserHelper.person?.name?.first || "").trim();
+  const greeting = greetingForHour(new Date().getHours());
+  const todayLabel = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
   return (
     <>
       <PageHeader title={headerTitle} subtitle={headerSubtitle} />
       <PageContainer>
+        <Box sx={{ mb: 3 }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}>
+            {firstName ? `${greeting}, ${firstName}` : greeting}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {todayLabel}
+          </Typography>
+        </Box>
+
+        <DashboardStats />
+
         <Box sx={{ mb: 3 }}>
           <CardWithHeader title={Locale.label("helpers.secondaryMenuHelper.quickActions")} icon={<FlashOn sx={{ color: "primary.main", fontSize: 20 }} />}>
             {isDomainAdmin ? <AdminWelcome /> : <MemberWelcome />}
