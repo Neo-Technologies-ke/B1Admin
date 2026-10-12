@@ -75,9 +75,12 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
 
   const leaderTitleOptions = useMemo(() => {
     const cat = (props.group?.categoryName || "").toLowerCase();
-    if (cat === "village") return ["Village Leader", "Village Coordinator"];
-    if (cat === "people group") return ["PG Leader", "PG ICT Coordinator", "PG Admin"];
-    return [];
+    if (cat === "village") return ["Village Leader", "Village Coordinator", "Assistant Village Leader"];
+    if (cat === "people group") return ["PG Leader", "PG ICT Coordinator", "PG Admin", "Assistant PG Leader"];
+    if (cat === "team") return ["Team Leader", "Team Coordinator", "Assistant Team Leader"];
+    if (cat === "ministry") return ["Ministry Leader", "Ministry Coordinator", "Assistant Ministry Leader"];
+    if (cat === "responsibility") return ["Coordinator", "Assistant Coordinator"];
+    return ["Leader", "Group Coordinator", "Assistant Leader"];
   }, [props.group?.categoryName]);
 
   const groupAccess = useGroupAccess(props.group?.id);
