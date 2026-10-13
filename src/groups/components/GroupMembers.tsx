@@ -73,15 +73,33 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
   const [leaderDialogMember, setLeaderDialogMember] = useState<GroupMemberInterface | null>(null);
   const [leaderTitleChoice, setLeaderTitleChoice] = useState<string>("");
 
+  // Group-scoped roles (Own Groups permissions only, managed on the Roles page)
+  // are offered as leader types — picking one grants group-admin access for this
+  // group only. Singularized for display: role "Village Coordinators" -> "Village
+  // Coordinator", and the API matches it back to the role case-insensitively.
+  const leaderRoleTypes = useQuery<{ id: string; name: string }[]>({
+    queryKey: ["/roles/groupleadertypes", "MembershipApi"],
+    placeholderData: [],
+    select: (data) => Array.isArray(data) ? data : [],
+    enabled: !!props.group?.id
+  });
+
   const leaderTitleOptions = useMemo(() => {
     const cat = (props.group?.categoryName || "").toLowerCase();
-    if (cat === "village") return ["Village Leader", "Village Coordinator", "Assistant Village Leader"];
-    if (cat === "people group") return ["PG Leader", "PG ICT Coordinator", "PG Admin", "Assistant PG Leader"];
-    if (cat === "team") return ["Team Leader", "Team Coordinator", "Assistant Team Leader"];
-    if (cat === "ministry") return ["Ministry Leader", "Ministry Coordinator", "Assistant Ministry Leader"];
-    if (cat === "responsibility") return ["Coordinator", "Assistant Coordinator"];
-    return ["Leader", "Group Coordinator", "Assistant Leader"];
-  }, [props.group?.categoryName]);
+    let curated: string[];
+    if (cat === "village") curated = ["Village Leader", "Village Coordinator", "Assistant Village Leader"];
+    else if (cat === "people group") curated = ["PG Leader", "PG ICT Coordinator", "PG Admin", "Assistant PG Leader"];
+    else if (cat === "team") curated = ["Team Leader", "Team Coordinator", "Assistant Team Leader"];
+    else if (cat === "ministry") curated = ["Ministry Leader", "Ministry Coordinator", "Assistant Ministry Leader"];
+    else if (cat === "responsibility") curated = ["Coordinator", "Assistant Coordinator"];
+    else curated = ["Leader", "Group Coordinator", "Assistant Leader"];
+    const norm = (s: string) => (s || "").toLowerCase().replace(/s\b/g, "").replace(/\s+/g, " ").trim();
+    const seen = new Set(curated.map(norm));
+    const extras = (leaderRoleTypes.data || [])
+      .map((r) => r.name.replace(/s\b/g, "").trim())
+      .filter((t) => t && !seen.has(norm(t)));
+    return [...curated, ...extras];
+  }, [props.group?.categoryName, leaderRoleTypes.data]);
 
   const groupAccess = useGroupAccess(props.group?.id);
   const canView = groupAccess.canView;
@@ -610,6 +628,9 @@ export const GroupMembers: React.FC<Props> = memo((props) => {
               {leaderTitleOptions.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
             </Select>
           </FormControl>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.5 }}>
+            They&apos;ll get admin access to {props.group?.name} only. Leader-type permissions are managed on the Roles page.
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setLeaderDialogMember(null)}>Cancel</Button>
