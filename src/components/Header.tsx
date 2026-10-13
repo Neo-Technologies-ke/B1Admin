@@ -46,7 +46,6 @@ export const Header: React.FC = () => {
 
     // Temporarily hidden
     if (UserHelper.checkAccess(Permissions.contentApi.streamingServices.edit)) menuItems.push({ url: "/sermons", label: Locale.label("common.sermons"), icon: "live_tv" });
-    if (UserHelper.checkAccess(Permissions.contentApi.content.edit)) menuItems.push({ url: "/site/pages", label: Locale.label("common.website"), icon: "language" });
     const canManageAppointments = UserHelper.checkAccess({ api: "ContentApi", contentType: "Appointments", action: "Edit" } as any) || UserHelper.checkAccess({ api: "ContentApi", contentType: "Appointments", action: "Admin" } as any);
     if (UserHelper.checkAccess(Permissions.contentApi.content.edit) || canManageAppointments) menuItems.push({ url: canManageAppointments && !UserHelper.checkAccess(Permissions.contentApi.content.edit) ? "/calendars/appointments" : "/calendars", label: Locale.label("helpers.secondaryMenuHelper.calendars"), icon: "calendar_month" });
     if (UserHelper.checkAccess(Permissions.contentApi.content.edit)) menuItems.push({ url: "/mobile", label: Locale.label("common.mobile"), icon: "phone_iphone" });
